@@ -1,0 +1,39 @@
+{
+  "config": {
+    "version": 1,
+    "mode": "advisory"
+  },
+  "context": {
+    "kind": "pull_request",
+    "repository": {
+      "owner": "octo",
+      "name": "example",
+      "defaultBranch": "main"
+    },
+    "number": 42,
+    "title": "Fix parser edge case",
+    "body": "## Summary\n\nWhat changed: fixed parser handling for escaped delimiters. Why: the parser crashed on valid input.\n\n## Linked issue\n\nFixes #41\n\n## Tests\n\nnpm run test\n\n## Scope\n\nOut of scope: parser performance tuning.",
+    "author": {
+      "login": "contributor",
+      "association": "CONTRIBUTOR"
+    },
+    "labels": [],
+    "files": [
+      {
+        "path": "src/parser.ts",
+        "status": "modified",
+        "additions": 25,
+        "deletions": 6,
+        "patch": "+export function parseEscapedDelimiter() {}"
+      },
+      {
+        "path": "test/parser.test.ts",
+        "status": "added",
+        "additions": 18,
+        "deletions": 0,
+        "patch": "+test('escaped delimiter', () => {})"
+      }
+    ],
+    "linkedIssues": [41]
+  }
+}

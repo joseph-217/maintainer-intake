@@ -47,4 +47,3 @@ Pending.
 ## Intentionally Ignored Or Untracked Files
 
 Pending.
-

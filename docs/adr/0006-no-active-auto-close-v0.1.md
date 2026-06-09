@@ -21,4 +21,3 @@ v0.1 supports advisory, check, label, and gate modes only. It will not close iss
 - Mode tests assert no close effects are produced.
 - Source and docs scans check for active close behavior.
 - Action write tests cover comments, checks, and configured labels only.
-

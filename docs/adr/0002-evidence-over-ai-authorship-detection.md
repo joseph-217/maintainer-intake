@@ -21,4 +21,3 @@ The engine evaluates contribution evidence and repository-policy compliance. It 
 - Snapshot maintainer responses for non-accusatory language.
 - Scan public files for authorship-detection claims.
 - Test that generated-work acknowledgements are framed as accountability, not detection.
-

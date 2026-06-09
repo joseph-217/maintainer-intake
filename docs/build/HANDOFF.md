@@ -15,12 +15,12 @@ Baseline fixture creation is ready to commit after diff hygiene, identity, and p
 
 ## Commands Last Run
 
-| Command | Exit | Observation |
-|---|---:|---|
-| `git -C maintainer-intake diff --check` | 0 | No whitespace errors reported. |
-| `git -C maintainer-intake config user.name` | 0 | Returned `Joseph`. |
-| `git -C maintainer-intake config user.email` | 0 | Returned `128547272+asdgjshjdfkjsurehjg@users.noreply.github.com`. |
-| Private-marker `rg` scan | 0 | No matches in baseline files. |
+| Command                                      | Exit | Observation                                                        |
+| -------------------------------------------- | ---: | ------------------------------------------------------------------ |
+| `git -C maintainer-intake diff --check`      |    0 | No whitespace errors reported.                                     |
+| `git -C maintainer-intake config user.name`  |    0 | Returned `Joseph`.                                                 |
+| `git -C maintainer-intake config user.email` |    0 | Returned `128547272+asdgjshjdfkjsurehjg@users.noreply.github.com`. |
+| Private-marker `rg` scan                     |    0 | No matches in baseline files.                                      |
 
 ## Known Blockers
 

@@ -21,4 +21,3 @@ The Action will inspect issues, pull requests, repository files, comments, label
 - Static security tests scan workflows and source for unsafe checkout or contributor-code execution.
 - Local Action harness exercises supported events without repository checkout.
 - Security-model docs state the boundary and rollback path.
-

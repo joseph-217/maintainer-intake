@@ -1,0 +1,22 @@
+{
+  "config": {
+    "version": 1,
+    "mode": "advisory"
+  },
+  "context": {
+    "kind": "issue",
+    "repository": {
+      "owner": "octo",
+      "name": "example",
+      "defaultBranch": "main"
+    },
+    "number": 8,
+    "title": "Feature request: add export button",
+    "body": "Please add an export button.",
+    "author": {
+      "login": "reporter",
+      "association": "NONE"
+    },
+    "labels": ["enhancement"]
+  }
+}

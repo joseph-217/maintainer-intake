@@ -1,0 +1,19 @@
+version: 1
+mode: advisory
+pullRequests:
+  requireLinkedIssue: true
+  requireTestEvidence: true
+  largeChangeThreshold: 500
+  riskyPaths:
+    - pattern: ".github/workflows/**"
+      require:
+        - security-impact
+issues:
+  bug:
+    require:
+      - reproduction
+      - expected-behavior
+      - actual-behavior
+labels:
+  ready: intake:ready
+  needsEvidence: intake:needs-evidence

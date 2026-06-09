@@ -1,4 +1,8 @@
 node_modules/
+dist/*
+!dist/action/
+!dist/action/index.js
+!dist/action/index.js.map
 coverage/
 .nyc_output/
 .tmp/
@@ -8,4 +12,3 @@ temp/
 .env.*
 .DS_Store
 artifacts/tmp/
-

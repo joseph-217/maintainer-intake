@@ -1,0 +1,22 @@
+{
+  "config": {
+    "version": 1,
+    "mode": "advisory"
+  },
+  "context": {
+    "kind": "issue",
+    "repository": {
+      "owner": "octo",
+      "name": "example",
+      "defaultBranch": "main"
+    },
+    "number": 7,
+    "title": "Bug: parser crashes on escaped delimiter",
+    "body": "## Reproduction\n\nRun node repro.js with escaped delimiter input.\n\n## Expected behavior\n\nParser returns a token.\n\n## Actual behavior\n\nParser throws an error.\n\n## Environment\n\nNode 24 on macOS.",
+    "author": {
+      "login": "reporter",
+      "association": "NONE"
+    },
+    "labels": ["bug"]
+  }
+}

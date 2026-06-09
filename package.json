@@ -1,0 +1,85 @@
+{
+  "name": "maintainer-intake",
+  "version": "0.1.0",
+  "description": "Deterministic contribution-intake checks for open-source maintainers.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asdgjshjdfkjsurehjg/maintainer-intake.git"
+  },
+  "bugs": {
+    "url": "https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/issues"
+  },
+  "homepage": "https://github.com/asdgjshjdfkjsurehjg/maintainer-intake#readme",
+  "keywords": [
+    "open-source",
+    "maintainer-tools",
+    "github-actions",
+    "developer-tools",
+    "typescript",
+    "mcp",
+    "pull-requests",
+    "issue-triage"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "maintainer-intake": "./dist/cli/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "action.yml",
+    "README.md",
+    "docs/",
+    "examples/",
+    "fixtures/",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "SUPPORT.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "package.json"
+  ],
+  "scripts": {
+    "format:check": "prettier --check .",
+    "lint": "node scripts/lint.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run test/unit",
+    "test:integration": "vitest run test/integration",
+    "test:e2e": "vitest run test/e2e",
+    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean --out-dir dist",
+    "build:action": "ncc build src/action/index.ts -o dist/action --source-map",
+    "verify:bundle": "node scripts/verify-bundle.mjs",
+    "verify:pack": "node scripts/verify-pack.mjs",
+    "verify:security": "node scripts/verify-security.mjs",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run test:integration && npm run test:e2e && npm run build && npm run build:action && npm run verify:bundle && npm run verify:pack && npm run verify:security"
+  },
+  "dependencies": {
+    "@actions/core": "3.0.1",
+    "@actions/github": "9.1.1",
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@octokit/rest": "22.0.1",
+    "commander": "15.0.0",
+    "minimatch": "10.2.5",
+    "yaml": "2.9.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.2",
+    "@vercel/ncc": "0.44.0",
+    "prettier": "3.8.4",
+    "tsup": "8.5.1",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3",
+    "vitest": "4.1.8"
+  }
+}

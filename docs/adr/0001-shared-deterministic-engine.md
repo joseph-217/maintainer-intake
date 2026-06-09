@@ -21,4 +21,3 @@ All rule evaluation, status computation, write-plan generation, and renderable p
 - Search for stable rule IDs outside `src/engine/`.
 - Run CLI, MCP, and Action parity tests on the same fixtures.
 - Keep adapter tests focused on translation, protocol, and write execution rather than rule decisions.
-

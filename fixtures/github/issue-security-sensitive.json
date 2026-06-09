@@ -1,0 +1,22 @@
+{
+  "config": {
+    "version": 1,
+    "mode": "advisory"
+  },
+  "context": {
+    "kind": "issue",
+    "repository": {
+      "owner": "octo",
+      "name": "example",
+      "defaultBranch": "main"
+    },
+    "number": 9,
+    "title": "Security vulnerability in token handling",
+    "body": "Security report. Affected version: 1.2.3. Component: token parser. Impact: credential exposure. Reproduction: send a crafted header containing a secret token.",
+    "author": {
+      "login": "reporter",
+      "association": "NONE"
+    },
+    "labels": ["security"]
+  }
+}

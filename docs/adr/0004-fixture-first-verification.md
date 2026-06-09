@@ -21,4 +21,3 @@ Synthetic GitHub fixtures are first-class provider inputs. Unit, integration, CL
 - Full local verification runs without `GITHUB_TOKEN`, `GH_TOKEN`, npm auth, or model credentials.
 - CLI, MCP, and Action fixture runs are recorded in `docs/verification-evidence.md`.
 - Fresh-clone and packed-install lanes execute fixture commands.
-

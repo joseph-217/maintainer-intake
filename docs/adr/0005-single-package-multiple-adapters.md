@@ -22,4 +22,3 @@ The v0.1 product will ship as one npm package named `maintainer-intake`, subject
 - `npm pack --dry-run` output is audited.
 - A packed tarball is installed into a clean consumer fixture and the binary is executed.
 - Package metadata and files are checked for planning, token, and private-data leakage.
-

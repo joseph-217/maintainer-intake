@@ -1,0 +1,47 @@
+{
+  "config": {
+    "version": 1,
+    "mode": "gate",
+    "pullRequests": {
+      "largeChangeThreshold": 10,
+      "riskyPaths": [
+        {
+          "pattern": ".github/workflows/**",
+          "require": ["security-impact"]
+        }
+      ]
+    }
+  },
+  "context": {
+    "kind": "pull_request",
+    "repository": {
+      "owner": "octo",
+      "name": "example",
+      "defaultBranch": "main"
+    },
+    "number": 43,
+    "title": "Change build workflow",
+    "body": "This changes CI behavior.",
+    "author": {
+      "login": "new-contributor",
+      "association": "FIRST_TIME_CONTRIBUTOR"
+    },
+    "labels": [],
+    "files": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "status": "modified",
+        "additions": 20,
+        "deletions": 12,
+        "patch": "+continue-on-error: true"
+      },
+      {
+        "path": "src/build.ts",
+        "status": "modified",
+        "additions": 80,
+        "deletions": 4,
+        "patch": "+export const build = true"
+      }
+    ]
+  }
+}
