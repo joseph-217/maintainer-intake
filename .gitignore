@@ -3,6 +3,7 @@ dist/*
 !dist/action/
 !dist/action/index.js
 !dist/action/index.js.map
+!dist/action/sourcemap-register.cjs
 coverage/
 .nyc_output/
 .tmp/

@@ -14,6 +14,10 @@ import {
 } from "../engine/index.js";
 import { IntakeResultSchema } from "../engine/types.js";
 import { loadFixtureBundle } from "../github/fixture-provider.js";
+import {
+  loadIssueFromGitHub,
+  loadPullRequestFromGitHub,
+} from "../github/octokit-provider.js";
 import { parseGitHubReference } from "../github/reference.js";
 
 const formatSchema = z.enum(["markdown", "json", "comment"]).default("json");
@@ -162,10 +166,20 @@ async function analyzeTool(
     throw new Error("Provide reference or fixturePath.");
   }
 
-  parseGitHubReference(args.reference);
-  throw new Error(
-    "Live GitHub MCP analysis is pending the GitHub provider slice. Use fixturePath for local proof.",
-  );
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (!token) {
+    throw new Error(
+      "Live GitHub MCP analysis requires GITHUB_TOKEN or GH_TOKEN. Use fixturePath for local proof.",
+    );
+  }
+
+  const reference = parseGitHubReference(args.reference);
+  const context =
+    expectedKind === "pull_request"
+      ? await loadPullRequestFromGitHub(reference, token)
+      : await loadIssueFromGitHub(reference, token);
+  const result = evaluateContribution(context, config);
+  return textResult(renderResult(result, args.format));
 }
 
 function textResult(text: string) {

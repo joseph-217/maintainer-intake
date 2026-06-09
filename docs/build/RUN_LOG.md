@@ -127,3 +127,34 @@ Commands run:
 | npm run test:integration |    0 | Fixture-provider integration passed.                  |
 | npm run test:e2e         |    0 | CLI plus MCP E2E passed: 7 tests total.               |
 | npm run build            |    0 | Package, CLI, and MCP entrypoints built successfully. |
+
+## 2026-06-09: GitHub Provider And Action Slice
+
+Expected files:
+
+- REST provider for live issue and pull request reads plus constrained comment, label, and check write execution.
+- GitHub Action entrypoint and action metadata using Node 24.
+- Action dry-run fixture harness for supported and unsupported events.
+- ncc Action bundle under dist/action.
+- Provider contract tests.
+
+Decisions:
+
+- The Action harness uses MAINTAINER_INTAKE_FIXTURE for credential-free local proof; public workflows will use GitHub event payloads and REST reads.
+- build:action uses ncc and removes declaration/package metadata artifacts, leaving only runtime bundle files in dist/action.
+- pull_request_target support remains metadata/API-only; no checkout or contributor-code execution is introduced.
+
+Commands run:
+
+| Command                  | Exit | Observation                                               |
+| ------------------------ | ---: | --------------------------------------------------------- |
+| npm run format:check     |    0 | Prettier check passed.                                    |
+| npm run lint             |    0 | Adapter rule-ID lint passed.                              |
+| npm run typecheck        |    0 | TypeScript strict check passed.                           |
+| npm test                 |    0 | Unit tests passed.                                        |
+| npm run test:integration |    0 | Fixture and GitHub reference-provider integration passed. |
+| npm run test:e2e         |    0 | CLI, MCP, and Action harness E2E passed: 9 tests total.   |
+| npm run build            |    0 | Package, CLI, and MCP entrypoints built successfully.     |
+| npm run build:action     |    0 | ncc produced dist/action runtime bundle files.            |
+| npm run verify:bundle    |    0 | Action bundle presence check passed.                      |
+| npm run verify:security  |    0 | Privileged-event static security scan passed.             |

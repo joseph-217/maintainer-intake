@@ -16,6 +16,10 @@ import {
   type RenderFormat,
 } from "../engine/index.js";
 import { loadFixtureBundle } from "../github/fixture-provider.js";
+import {
+  loadIssueFromGitHub,
+  loadPullRequestFromGitHub,
+} from "../github/octokit-provider.js";
 import { parseGitHubReference } from "../github/reference.js";
 
 const VERSION = "0.1.0";
@@ -274,24 +278,34 @@ async function analyzeContribution(
     return 2;
   }
 
+  let parsedReference;
   try {
-    parseGitHubReference(reference);
+    parsedReference = parseGitHubReference(reference);
   } catch (error) {
     io.stderr.write(formatError(error) + "\n");
     return 2;
   }
 
-  if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (!token) {
     io.stderr.write(
       "Live GitHub analysis requires GITHUB_TOKEN or GH_TOKEN. Fixture mode does not require network credentials.\n",
     );
     return 3;
   }
 
-  io.stderr.write(
-    "Live GitHub provider is not implemented in this slice. Use --fixture for local proof.\n",
-  );
-  return 3;
+  try {
+    const context =
+      expectedKind === "pull_request"
+        ? await loadPullRequestFromGitHub(parsedReference, token)
+        : await loadIssueFromGitHub(parsedReference, token);
+    const result = evaluateContribution(context, config);
+    io.stdout.write(renderResult(result, options.format));
+    return result.writePlan.gate.exitCode;
+  } catch (error) {
+    io.stderr.write("GitHub provider error: " + formatError(error) + "\n");
+    return 3;
+  }
 }
 
 async function fileExists(path: string): Promise<boolean> {

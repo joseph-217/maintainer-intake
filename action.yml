@@ -1,0 +1,42 @@
+name: Maintainer Intake
+description: Deterministic contribution-intake checks for open-source maintainers.
+author: Joseph
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  config:
+    description: Path to the maintainer-intake config file.
+    required: false
+    default: .github/maintainer-intake.yml
+  mode:
+    description: "Override configured mode: advisory, check, label, or gate."
+    required: false
+  token:
+    description: GitHub token used for API reads and configured write-back.
+    required: false
+    default: "${{ github.token }}"
+  comment:
+    description: Whether to create or update the maintainer-intake comment.
+    required: false
+    default: "true"
+  labels:
+    description: Whether to apply configured maintainer-intake labels.
+    required: false
+    default: "false"
+  check-name:
+    description: Name for check-run output in check or gate mode.
+    required: false
+    default: Maintainer Intake
+outputs:
+  status:
+    description: Deterministic intake status.
+  score:
+    description: Intake score from 0 to 100.
+  result-json:
+    description: Serialized intake result when small enough for Action output.
+  packet-summary:
+    description: One-line maintainer packet summary.
+runs:
+  using: node24
+  main: dist/action/index.js
