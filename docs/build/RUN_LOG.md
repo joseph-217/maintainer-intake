@@ -187,3 +187,23 @@ Commands run:
 | npm run verify:pack                                                                                                                                 |    0 | Packed-install smoke passed after moving `npm pack` output into a temporary directory.        |
 | Private-marker scan against local-only planning phrases                                                                                             |    0 | No private planning or local path markers found in public files.                              |
 | rg -n "\\b(TODO\|FIXME\|TBD\|PLACEHOLDER\|your-org\|your-repo\|example\\.com)\\b" . --glob "!node_modules/**" --glob "!.git/**" --glob "!dist/\*\*" |    0 | No authored placeholder markers found outside the generated Action bundle.                    |
+
+## 2026-06-09: Documentation Dogfood Pass
+
+Purpose:
+
+- Exercise the public README, configuration, rule/example, Action-workflow, and MCP documentation commands separately from the full test suite.
+- Keep the docs evidence explicit because these commands are what a new maintainer would run first.
+
+Commands run:
+
+| Command                                                                                                                                                                                                               | Exit | Observation                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | --------------------------------------------------------------------------- |
+| node dist/cli/index.js analyze-pr --fixture fixtures/github/pr-ready.json --format markdown                                                                                                                           |    0 | README quickstart ready PR produced a Markdown maintainer packet.           |
+| node dist/cli/index.js analyze-pr --fixture fixtures/github/pr-unready.json --format json                                                                                                                             |    1 | README quickstart unready PR produced JSON and the expected gate exit.      |
+| node dist/cli/index.js analyze-issue --fixture fixtures/github/issue-bug-ready.json --format markdown                                                                                                                 |    0 | CLI issue example produced a Markdown maintainer packet.                    |
+| node dist/cli/index.js init                                                                                                                                                                                           |    0 | Configuration docs init preview produced default YAML.                      |
+| node dist/cli/index.js policy doctor --config fixtures/config/valid.yml                                                                                                                                               |    0 | Configuration docs policy doctor passed on the valid fixture.               |
+| node dist/cli/index.js policy doctor --config examples/maintainer-intake.yml                                                                                                                                          |    0 | Public example policy validated successfully.                               |
+| YAML.parse over examples/maintainer-intake.yml, examples/workflows/maintainer-intake.yml, .github/workflows/ci.yml, .github/workflows/codeql.yml, .github/workflows/dependency-review.yml, and .github/dependabot.yml |    0 | Example, CI, CodeQL, dependency-review, and Dependabot YAML parsed cleanly. |
+| Authorship-positioning scan over authored source and docs outside dist/node_modules                                                                                                                                   |    0 | Only the explicit non-detection ADR language matched.                       |
