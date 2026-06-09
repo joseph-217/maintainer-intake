@@ -2,46 +2,51 @@
 
 ## Current State
 
-The product repository has been initialized with governance and verification fixtures only. Product implementation has not started.
+`maintainer-intake` is implemented, locally verified, publicly pushed, and release-ready.
 
-## Last Completed Acceptance Row
+Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 
-Baseline fixture creation is ready to commit after diff hygiene, identity, and private-marker scans passed.
+## Last Completed Acceptance Rows
+
+- Local verification, no-token verification, explicit Node 22/24 verification, packed-install verification, and fresh-clone verification have passed.
+- Public repository settings, topics, security settings, branch protection, workflow activation, CI, and CodeQL have been read back.
+- The first public CI failure was fixed by sanitizing runner file-command environment variables in the Action E2E harness.
 
 ## Current Branch And Commit
 
 - Branch: `main`
-- Commit: pending first commit
+- Latest pushed commit before this handoff update: `cb7d98b4b74c5e430cccc1e9d4162b4883b5d30c`
 
 ## Commands Last Run
 
-| Command                                      | Exit | Observation                                                        |
-| -------------------------------------------- | ---: | ------------------------------------------------------------------ |
-| `git -C maintainer-intake diff --check`      |    0 | No whitespace errors reported.                                     |
-| `git -C maintainer-intake config user.name`  |    0 | Returned `Joseph`.                                                 |
-| `git -C maintainer-intake config user.email` |    0 | Returned `128547272+asdgjshjdfkjsurehjg@users.noreply.github.com`. |
-| Private-marker `rg` scan                     |    0 | No matches in baseline files.                                      |
+| Command                                           | Exit/state | Observation                                                                    |
+| ------------------------------------------------- | ---------: | ------------------------------------------------------------------------------ |
+| `npm run verify`                                  |          0 | Full local verification passed after the Action harness fix and audit updates. |
+| `npm exec --package node@22 -- node --run verify` |          0 | Full verification passed under Node 22.22.3.                                   |
+| `npm exec --package node@24 -- node --run verify` |          0 | Full verification passed under Node 24.16.0.                                   |
+| Fresh clone, `npm ci`, Node 24 verify             |          0 | Fresh clone installed cleanly and passed full verification.                    |
+| Public CI run 27243147472                         |    success | CI passed on the public repository.                                            |
+| Public CodeQL run 27243147473                     |    success | CodeQL passed on the public repository.                                        |
 
 ## Known Blockers
 
-- Default local `node` is not Node 22 or Node 24. Use explicit Node runtimes for required gates until a project-local version is pinned.
-- npm publication is pending auth and ownership verification.
-- Public GitHub publication is gated on full local proof, privacy scans, active identity, product git identity, CI, and release gates.
+- npm publication is pending npm authentication. `npm whoami` returned `ENEEDAUTH`.
 
 ## GitHub Publication State
 
-No remote repository has been created or pushed by this product repo yet.
+The repository is public, pushed, and configured. See `artifacts/verification/github-settings.md` for the settings audit.
 
 ## npm Publication State
 
-Package name availability has been checked, but npm authentication and ownership have not been verified.
+The package name returned `E404` from npm registry lookup, but no publication was attempted because npm auth is absent.
 
 ## Resume Command
 
-From the product repository root, resume with:
+From the product repository root:
 
 ```bash
 git status --short
+gh run list --repo asdgjshjdfkjsurehjg/maintainer-intake --limit 5
 ```
 
-Then continue with package, TypeScript, schemas, fixtures, scripts, and CI scaffold.
+Before release, wait for public CI and CodeQL to pass on the final report commit, then tag `v0.1.0`, create/update `v0`, and create the GitHub release.
