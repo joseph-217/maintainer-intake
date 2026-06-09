@@ -101,3 +101,29 @@ Commands run:
 | npm run test:integration |    0 | Fixture-provider integration passed.            |
 | npm run test:e2e         |    0 | CLI E2E passed: 6 tests.                        |
 | npm run build            |    0 | Package and CLI entrypoints built successfully. |
+
+## 2026-06-09: MCP Slice
+
+Expected files:
+
+- MCP stdio server exposing analyze_pr_intake, analyze_issue_intake, render_maintainer_packet, generate_policy_files, and explain_intake_config.
+- CLI mcp entrypoint that starts the MCP server on stdio.
+- Real MCP client E2E that lists and calls all tools.
+- Package build entry updated to include the MCP module.
+
+Decisions:
+
+- MCP remains a thin adapter over the shared deterministic engine.
+- Live GitHub MCP analysis remains pending until the GitHub provider slice; fixturePath is the current credential-free proof path.
+
+Commands run:
+
+| Command                  | Exit | Observation                                           |
+| ------------------------ | ---: | ----------------------------------------------------- |
+| npm run format:check     |    0 | Prettier check passed.                                |
+| npm run lint             |    0 | Adapter rule-ID lint passed.                          |
+| npm run typecheck        |    0 | TypeScript strict check passed.                       |
+| npm test                 |    0 | Unit tests passed.                                    |
+| npm run test:integration |    0 | Fixture-provider integration passed.                  |
+| npm run test:e2e         |    0 | CLI plus MCP E2E passed: 7 tests total.               |
+| npm run build            |    0 | Package, CLI, and MCP entrypoints built successfully. |

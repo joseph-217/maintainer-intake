@@ -138,6 +138,14 @@ export async function runCli(
       commandExitCode = exitCode;
     });
 
+  program
+    .command("mcp")
+    .description("Run the maintainer-intake MCP server over stdio.")
+    .action(async () => {
+      const { startMcpServer } = await import("../mcp/index.js");
+      await startMcpServer(io.cwd);
+    });
+
   try {
     await program.parseAsync(argv, { from: "node" });
     return commandExitCode;

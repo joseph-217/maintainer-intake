@@ -56,7 +56,7 @@
     "test": "vitest run test/unit",
     "test:integration": "vitest run test/integration",
     "test:e2e": "vitest run test/e2e",
-    "build": "tsup src/index.ts src/cli/index.ts --format esm --dts --sourcemap --clean --out-dir dist",
+    "build": "tsup src/index.ts src/cli/index.ts src/mcp/index.ts --format esm --dts --sourcemap --clean --out-dir dist",
     "build:action": "ncc build src/action/index.ts -o dist/action --source-map",
     "verify:bundle": "node scripts/verify-bundle.mjs",
     "verify:pack": "node scripts/verify-pack.mjs",
