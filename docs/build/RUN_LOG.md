@@ -76,3 +76,28 @@ Commands run:
 | npm run typecheck                                      |    0 | TypeScript strict check passed.                                                              |
 | npm test                                               |    0 | Unit tests passed: 8 tests across config and engine behavior.                                |
 | npm run test:integration                               |    0 | Fixture-provider integration test passed.                                                    |
+
+## 2026-06-09: CLI Slice
+
+Expected files:
+
+- CLI entrypoint with init, policy doctor, analyze-pr, analyze-issue, help, and version.
+- CLI process E2E tests for preview, write, idempotency, conflict behavior, formats, exit codes, and fixture analysis.
+- Package build entry updated to include the CLI.
+
+Decisions:
+
+- Live GitHub analysis returns provider/auth exit code 3 until the GitHub provider slice. Fixture mode remains network-independent and fully exercised.
+- The mcp command will be added in the MCP slice rather than shipping a placeholder command.
+
+Commands run:
+
+| Command                  | Exit | Observation                                     |
+| ------------------------ | ---: | ----------------------------------------------- |
+| npm run format:check     |    0 | Prettier check passed.                          |
+| npm run lint             |    0 | Adapter rule-ID lint passed.                    |
+| npm run typecheck        |    0 | TypeScript strict check passed.                 |
+| npm test                 |    0 | Unit tests passed.                              |
+| npm run test:integration |    0 | Fixture-provider integration passed.            |
+| npm run test:e2e         |    0 | CLI E2E passed: 6 tests.                        |
+| npm run build            |    0 | Package and CLI entrypoints built successfully. |
