@@ -207,3 +207,18 @@ Commands run:
 | node dist/cli/index.js policy doctor --config examples/maintainer-intake.yml                                                                                                                                          |    0 | Public example policy validated successfully.                               |
 | YAML.parse over examples/maintainer-intake.yml, examples/workflows/maintainer-intake.yml, .github/workflows/ci.yml, .github/workflows/codeql.yml, .github/workflows/dependency-review.yml, and .github/dependabot.yml |    0 | Example, CI, CodeQL, dependency-review, and Dependabot YAML parsed cleanly. |
 | Authorship-positioning scan over authored source and docs outside dist/node_modules                                                                                                                                   |    0 | Only the explicit non-detection ADR language matched.                       |
+
+## 2026-06-09: No-Credential And Sensitive-Output Verification
+
+Purpose:
+
+- Prove that the complete local/CI fixture lane does not require provider credentials.
+- Prove that security-sensitive issue handling routes privately without echoing sensitive report details into the public maintainer packet.
+
+Commands run:
+
+| Command                                                                                                                                                        | Exit | Observation                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | ----------------------------------------------------------------------------------------- |
+| env -u GITHUB_TOKEN -u GH_TOKEN -u OPENAI_API_KEY -u NPM_TOKEN -u NODE_AUTH_TOKEN npm run verify                                                               |    0 | Full verify passed with common provider/package/model token variables removed.            |
+| node dist/cli/index.js analyze-issue --fixture fixtures/github/issue-security-sensitive.json --format markdown, then scan output for sensitive fixture phrases |    0 | Packet routed to private security process and did not echo sensitive report body phrases. |
+| Hardcoded secret-value scan over authored files outside dist/node_modules                                                                                      |    0 | No bearer token, authorization header, password assignment, or secret assignment matched. |
