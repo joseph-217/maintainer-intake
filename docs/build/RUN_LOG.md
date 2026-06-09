@@ -146,15 +146,16 @@ Decisions:
 
 Commands run:
 
-| Command                  | Exit | Observation                                               |
-| ------------------------ | ---: | --------------------------------------------------------- |
-| npm run format:check     |    0 | Prettier check passed.                                    |
-| npm run lint             |    0 | Adapter rule-ID lint passed.                              |
-| npm run typecheck        |    0 | TypeScript strict check passed.                           |
-| npm test                 |    0 | Unit tests passed.                                        |
-| npm run test:integration |    0 | Fixture and GitHub reference-provider integration passed. |
-| npm run test:e2e         |    0 | CLI, MCP, and Action harness E2E passed: 9 tests total.   |
-| npm run build            |    0 | Package, CLI, and MCP entrypoints built successfully.     |
-| npm run build:action     |    0 | ncc produced dist/action runtime bundle files.            |
-| npm run verify:bundle    |    0 | Action bundle presence check passed.                      |
-| npm run verify:security  |    0 | Privileged-event static security scan passed.             |
+| Command                                                     | Exit | Observation                                               |
+| ----------------------------------------------------------- | ---: | --------------------------------------------------------- |
+| npm run format:check                                        |    0 | Prettier check passed.                                    |
+| npm run lint                                                |    0 | Adapter rule-ID lint passed.                              |
+| npm run typecheck                                           |    0 | TypeScript strict check passed.                           |
+| npm test                                                    |    0 | Unit tests passed.                                        |
+| npm run test:integration                                    |    0 | Fixture and GitHub reference-provider integration passed. |
+| npm run test:e2e                                            |    0 | CLI, MCP, and Action harness E2E passed: 9 tests total.   |
+| npm run build                                               |    0 | Package, CLI, and MCP entrypoints built successfully.     |
+| npm run build:action                                        |    0 | ncc produced dist/action runtime bundle files.            |
+| npm run verify:bundle                                       |    0 | Action bundle presence check passed.                      |
+| npm run verify:security                                     |    0 | Privileged-event static security scan passed.             |
+| npm run build:action && git diff --exit-code -- dist/action |    0 | Rebuilt committed Action bundle with zero diff.           |
