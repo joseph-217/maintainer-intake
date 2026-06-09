@@ -222,3 +222,18 @@ Commands run:
 | env -u GITHUB_TOKEN -u GH_TOKEN -u OPENAI_API_KEY -u NPM_TOKEN -u NODE_AUTH_TOKEN npm run verify                                                               |    0 | Full verify passed with common provider/package/model token variables removed.            |
 | node dist/cli/index.js analyze-issue --fixture fixtures/github/issue-security-sensitive.json --format markdown, then scan output for sensitive fixture phrases |    0 | Packet routed to private security process and did not echo sensitive report body phrases. |
 | Hardcoded secret-value scan over authored files outside dist/node_modules                                                                                      |    0 | No bearer token, authorization header, password assignment, or secret assignment matched. |
+
+## 2026-06-09: Node Runtime And Fresh-Clone Verification
+
+Purpose:
+
+- Verify the supported Node 22 and Node 24 runtime lines explicitly because the local default Node is newer than the declared support floor.
+- Verify a clean clone can install from the lockfile and run the complete release gate.
+
+Commands run:
+
+| Command                                                                                                                              | Exit | Observation                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ---: | ---------------------------------------------------------------------------------------------------------------- |
+| npm exec --package node@22 -- node --run verify                                                                                      |    0 | Full verify passed under Node 22.22.3.                                                                           |
+| npm exec --package node@24 -- node --run verify                                                                                      |    0 | Full verify passed under Node 24.16.0.                                                                           |
+| git clone local product repo to /tmp; npm ci; npm exec --package node@24 -- node --run verify; git status --short in the fresh clone |    0 | Fresh clone at commit 332c0350ebc36902beb2c40c4c19382b770fd30e installed cleanly and passed full Node 24 verify. |
