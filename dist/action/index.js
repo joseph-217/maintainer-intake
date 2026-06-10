@@ -39090,7 +39090,7 @@ var io_util_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _
 };
 
 
-const { chmod, copyFile, lstat, mkdir, open: io_util_open, readdir, rename, rm, rmdir, stat, symlink, unlink } = external_fs_namespaceObject.promises;
+const { chmod, copyFile, lstat, mkdir, open: io_util_open, readdir: io_util_readdir, rename, rm, rmdir, stat: io_util_stat, symlink, unlink } = external_fs_namespaceObject.promises;
 // export const {open} = 'fs'
 const IS_WINDOWS = process.platform === 'win32';
 /**
@@ -39121,7 +39121,7 @@ const READONLY = external_fs_namespaceObject.constants.O_RDONLY;
 function exists(fsPath) {
     return io_util_awaiter(this, void 0, void 0, function* () {
         try {
-            yield stat(fsPath);
+            yield io_util_stat(fsPath);
         }
         catch (err) {
             if (err.code === 'ENOENT') {
@@ -39134,7 +39134,7 @@ function exists(fsPath) {
 }
 function isDirectory(fsPath_1) {
     return io_util_awaiter(this, arguments, void 0, function* (fsPath, useStat = false) {
-        const stats = useStat ? yield stat(fsPath) : yield lstat(fsPath);
+        const stats = useStat ? yield io_util_stat(fsPath) : yield lstat(fsPath);
         return stats.isDirectory();
     });
 }
@@ -39164,7 +39164,7 @@ function tryGetExecutablePath(filePath, extensions) {
         let stats = undefined;
         try {
             // test file exists
-            stats = yield stat(filePath);
+            stats = yield io_util_stat(filePath);
         }
         catch (err) {
             if (err.code !== 'ENOENT') {
@@ -39192,7 +39192,7 @@ function tryGetExecutablePath(filePath, extensions) {
             filePath = originalFilePath + extension;
             stats = undefined;
             try {
-                stats = yield stat(filePath);
+                stats = yield io_util_stat(filePath);
             }
             catch (err) {
                 if (err.code !== 'ENOENT') {
@@ -39206,7 +39206,7 @@ function tryGetExecutablePath(filePath, extensions) {
                     try {
                         const directory = external_path_namespaceObject.dirname(filePath);
                         const upperName = external_path_namespaceObject.basename(filePath).toUpperCase();
-                        for (const actualName of yield readdir(directory)) {
+                        for (const actualName of yield io_util_readdir(directory)) {
                             if (upperName === actualName.toUpperCase()) {
                                 filePath = external_path_namespaceObject.join(directory, actualName);
                                 break;
@@ -52666,9 +52666,21 @@ const IssueConfigSchema = object({
 })
     .strict();
 const LabelConfigSchema = object({
-    ready: schemas_string().default("intake:ready"),
-    needsEvidence: schemas_string().default("intake:needs-evidence"),
-    maintainerDecision: schemas_string().default("intake:maintainer-decision"),
+    ready: schemas_string().min(1).default("intake:ready"),
+    needsEvidence: schemas_string().min(1).default("intake:needs-evidence"),
+    maintainerDecision: schemas_string().min(1).default("intake:maintainer-decision"),
+})
+    .strict();
+const PolicyDiscoveryConfigSchema = object({
+    requiredFiles: array(schemas_string().min(1)).default([]),
+    optionalFiles: array(schemas_string().min(1))
+        .default([
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "AGENTS.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+    ]),
+    issueTemplateDirectory: schemas_string().min(1).default(".github/ISSUE_TEMPLATE"),
 })
     .strict();
 const DEFAULT_PULL_REQUEST_CONFIG = {
@@ -52694,12 +52706,23 @@ const DEFAULT_LABEL_CONFIG = {
     needsEvidence: "intake:needs-evidence",
     maintainerDecision: "intake:maintainer-decision",
 };
+const DEFAULT_POLICY_DISCOVERY_CONFIG = {
+    requiredFiles: [],
+    optionalFiles: [
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "AGENTS.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+    ],
+    issueTemplateDirectory: ".github/ISSUE_TEMPLATE",
+};
 const IntakeConfigSchema = object({
     version: literal(1),
     mode: ModeSchema.default("advisory"),
     pullRequests: PullRequestConfigSchema.default(DEFAULT_PULL_REQUEST_CONFIG),
     issues: IssueConfigSchema.default(DEFAULT_ISSUE_CONFIG),
     labels: LabelConfigSchema.default(DEFAULT_LABEL_CONFIG),
+    policy: PolicyDiscoveryConfigSchema.default(DEFAULT_POLICY_DISCOVERY_CONFIG),
 })
     .strict();
 const schema_DEFAULT_CONFIG = IntakeConfigSchema.parse({
@@ -56109,7 +56132,85 @@ function ruleEvidence(rule) {
     return rule.evidence.join(" ");
 }
 
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
+;// CONCATENATED MODULE: ./src/engine/policy/discovery.ts
+
+
+async function discoverPolicyFiles(cwd, config) {
+    const paths = uniquePaths(config.policy.requiredFiles.concat(config.policy.optionalFiles));
+    const required = new Set(config.policy.requiredFiles);
+    const files = [];
+    for (const path of paths) {
+        const absolute = resolve(cwd, path);
+        try {
+            const info = await stat(absolute);
+            const file = {
+                path,
+                required: required.has(path),
+                present: info.isFile(),
+            };
+            if (info.isFile())
+                file.bytes = info.size;
+            files.push(file);
+        }
+        catch (error) {
+            if (error.code !== "ENOENT")
+                throw error;
+            files.push({
+                path,
+                required: required.has(path),
+                present: false,
+            });
+        }
+    }
+    const issueForms = await listIssueForms(resolve(cwd, config.policy.issueTemplateDirectory), config.policy.issueTemplateDirectory);
+    const missingRequired = files
+        .filter((file) => file.required && !file.present)
+        .map((file) => file.path);
+    const missingOptional = files
+        .filter((file) => !file.required && !file.present)
+        .map((file) => file.path);
+    return {
+        files,
+        issueForms,
+        missingRequired,
+        missingOptional,
+    };
+}
+async function readPolicyFile(cwd, path) {
+    try {
+        return await readFile(resolve(cwd, path), "utf8");
+    }
+    catch (error) {
+        if (error.code === "ENOENT")
+            return undefined;
+        throw error;
+    }
+}
+function uniquePaths(paths) {
+    return Array.from(new Set(paths));
+}
+async function listIssueForms(absoluteDirectory, displayDirectory) {
+    try {
+        const entries = await readdir(absoluteDirectory, {
+            withFileTypes: true,
+        });
+        return entries
+            .filter((entry) => entry.isFile())
+            .map((entry) => displayDirectory + "/" + entry.name)
+            .filter((path) => /\.(ya?ml|md)$/i.test(path))
+            .sort();
+    }
+    catch (error) {
+        if (error.code === "ENOENT")
+            return [];
+        throw error;
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/engine/index.ts
+
 
 
 
@@ -56298,8 +56399,11 @@ async function loadPullRequestFromGitHub(reference, token) {
             author: comment.user?.login,
             body: comment.body ?? "",
         })),
-        files: files.map(normalizeFile),
-        linkedIssues: [],
+        files: files.map(normalizeGitHubFile),
+        linkedIssues: extractLinkedIssueNumbers([
+            pullResponse.data.body ?? "",
+            ...comments.map((comment) => comment.body ?? ""),
+        ].join("\n")),
         metadata: {
             headSha: pullResponse.data.head.sha,
             baseSha: pullResponse.data.base.sha,
@@ -56439,7 +56543,7 @@ function normalizeLabels(labels) {
     })
         .filter(Boolean);
 }
-function normalizeFile(file) {
+function normalizeGitHubFile(file) {
     return {
         path: file.filename,
         previousPath: file.previous_filename,
@@ -56447,9 +56551,21 @@ function normalizeFile(file) {
         additions: file.additions,
         deletions: file.deletions,
         patch: file.patch,
-        isBinary: file.patch === undefined,
-        truncated: false,
+        isBinary: file.patch === undefined && isLikelyBinaryPath(file.filename),
+        truncated: file.patch === undefined && !isLikelyBinaryPath(file.filename),
     };
+}
+function extractLinkedIssueNumbers(value) {
+    const numbers = new Set();
+    for (const match of value.matchAll(/(?:fixe[sd]?|close[sd]?|resolve[sd]?|refs?)\s+#(\d+)|\b#(\d+)\b/gi)) {
+        const raw = match[1] ?? match[2];
+        if (!raw)
+            continue;
+        const number = Number(raw);
+        if (Number.isInteger(number) && number > 0)
+            numbers.add(number);
+    }
+    return Array.from(numbers).sort((a, b) => a - b);
 }
 function normalizeFileStatus(status) {
     if (status === "added" ||
@@ -56462,6 +56578,9 @@ function normalizeFileStatus(status) {
         return status;
     }
     return "changed";
+}
+function isLikelyBinaryPath(path) {
+    return /\.(png|jpe?g|gif|webp|ico|pdf|zip|gz|tgz|woff2?|ttf|otf|mp4|mov|mp3|wav)$/i.test(path);
 }
 
 ;// CONCATENATED MODULE: ./src/action/index.ts

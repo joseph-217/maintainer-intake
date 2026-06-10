@@ -110,6 +110,17 @@ describe("CLI process behavior", () => {
     expect(result.status).toBe(3);
     expect(result.stderr).toContain("requires GITHUB_TOKEN or GH_TOKEN");
   });
+
+  test("returns internal invariant exit code for malformed fixture JSON", async () => {
+    const temp = await mkdtemp(
+      join(tmpdir(), "maintainer-intake-bad-fixture-"),
+    );
+    const fixture = join(temp, "fixture.json");
+    await writeFile(fixture, "{not json");
+    const result = run(["analyze-pr", "--fixture", fixture]);
+    expect(result.status).toBe(4);
+    expect(result.stderr).toContain("JSON");
+  });
 });
 
 function run(

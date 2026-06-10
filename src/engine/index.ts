@@ -23,6 +23,7 @@ export * from "./config/schema.js";
 export * from "./render/index.js";
 export * from "./rules/registry.js";
 export * from "./types.js";
+export * from "./policy/discovery.js";
 
 export function evaluateContribution(
   rawContext: unknown,

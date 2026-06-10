@@ -2,6 +2,8 @@ import { join } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { describe, expect, test } from "vitest";
+import { DEFAULT_CONFIG, evaluateContribution } from "../../src/index.js";
+import ready from "../../fixtures/github/pr-ready.json" with { type: "json" };
 
 const REPO_ROOT = process.cwd();
 
@@ -42,7 +44,11 @@ describe("MCP stdio server", () => {
         },
       });
       const result = JSON.parse(firstText(pr));
-      expect(result.status).toBe("ready_for_review");
+      expect(result).toMatchObject(
+        JSON.parse(
+          JSON.stringify(evaluateContribution(ready.context, DEFAULT_CONFIG)),
+        ),
+      );
 
       const issue = await client.callTool({
         name: "analyze_issue_intake",
@@ -75,6 +81,16 @@ describe("MCP stdio server", () => {
         arguments: {},
       });
       expect(firstText(explained)).toContain("mode: advisory");
+
+      const errorResult = await client.callTool({
+        name: "analyze_issue_intake",
+        arguments: {
+          fixturePath: "fixtures/github/pr-ready.json",
+          format: "json",
+        },
+      });
+      expect(errorResult.isError).toBe(true);
+      expect(firstText(errorResult)).toContain("does not match requested");
     } finally {
       await client.close();
     }

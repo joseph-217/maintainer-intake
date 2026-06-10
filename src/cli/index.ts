@@ -6,6 +6,7 @@ import { Command, CommanderError, Option } from "commander";
 import {
   ConfigError,
   DEFAULT_CONFIG,
+  discoverPolicyFiles,
   evaluateContribution,
   generateConfig,
   generatedPolicyFiles,
@@ -220,16 +221,37 @@ async function doctorPolicy(
   const absolute = resolve(io.cwd, path);
   const exists = await fileExists(absolute);
   const config = await loadConfigFromFile(absolute);
+  const policy = await discoverPolicyFiles(io.cwd, config);
   const warnings = exists
     ? []
     : [
         "Config file not found; using documented defaults. Run maintainer-intake init --write to create policy files.",
       ];
+  warnings.push(
+    ...policy.missingOptional.map(
+      (file) => "Optional policy file not found: " + file,
+    ),
+  );
+  if (policy.issueForms.length === 0) {
+    warnings.push(
+      "No issue forms found under " +
+        config.policy.issueTemplateDirectory +
+        ".",
+    );
+  }
+  if (policy.missingRequired.length > 0) {
+    throw new ConfigError(
+      "Missing required policy file(s): " +
+        policy.missingRequired.join(", ") +
+        ".",
+    );
+  }
   const report = {
     valid: true,
     configPath: path,
     mode: config.mode,
     warnings,
+    policy,
   };
 
   if (format === "json") {
@@ -238,6 +260,12 @@ async function doctorPolicy(
     io.stdout.write("maintainer-intake policy: valid\n");
     io.stdout.write("config: " + path + "\n");
     io.stdout.write("mode: " + config.mode + "\n");
+    io.stdout.write(
+      "policy files present: " +
+        policy.files.filter((file) => file.present).length +
+        "\n",
+    );
+    io.stdout.write("issue forms: " + policy.issueForms.length + "\n");
     for (const warning of warnings) {
       io.stdout.write("warning: " + warning + "\n");
     }

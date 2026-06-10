@@ -71,8 +71,13 @@ export async function loadPullRequestFromGitHub(
       author: comment.user?.login,
       body: comment.body ?? "",
     })),
-    files: files.map(normalizeFile),
-    linkedIssues: [],
+    files: files.map(normalizeGitHubFile),
+    linkedIssues: extractLinkedIssueNumbers(
+      [
+        pullResponse.data.body ?? "",
+        ...comments.map((comment) => comment.body ?? ""),
+      ].join("\n"),
+    ),
     metadata: {
       headSha: pullResponse.data.head.sha,
       baseSha: pullResponse.data.base.sha,
@@ -233,7 +238,7 @@ function normalizeLabels(labels: unknown[]): string[] {
     .filter(Boolean);
 }
 
-function normalizeFile(file: {
+export function normalizeGitHubFile(file: {
   filename: string;
   previous_filename?: string;
   status: string;
@@ -248,9 +253,22 @@ function normalizeFile(file: {
     additions: file.additions,
     deletions: file.deletions,
     patch: file.patch,
-    isBinary: file.patch === undefined,
-    truncated: false,
+    isBinary: file.patch === undefined && isLikelyBinaryPath(file.filename),
+    truncated: file.patch === undefined && !isLikelyBinaryPath(file.filename),
   };
+}
+
+export function extractLinkedIssueNumbers(value: string): number[] {
+  const numbers = new Set<number>();
+  for (const match of value.matchAll(
+    /(?:fixe[sd]?|close[sd]?|resolve[sd]?|refs?)\s+#(\d+)|\b#(\d+)\b/gi,
+  )) {
+    const raw = match[1] ?? match[2];
+    if (!raw) continue;
+    const number = Number(raw);
+    if (Number.isInteger(number) && number > 0) numbers.add(number);
+  }
+  return Array.from(numbers).sort((a, b) => a - b);
 }
 
 function normalizeFileStatus(status: string): ContributionFile["status"] {
@@ -266,4 +284,10 @@ function normalizeFileStatus(status: string): ContributionFile["status"] {
     return status;
   }
   return "changed";
+}
+
+function isLikelyBinaryPath(path: string): boolean {
+  return /\.(png|jpe?g|gif|webp|ico|pdf|zip|gz|tgz|woff2?|ttf|otf|mp4|mov|mp3|wav)$/i.test(
+    path,
+  );
 }

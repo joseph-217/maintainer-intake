@@ -50,9 +50,24 @@ export const IssueConfigSchema = z
 
 export const LabelConfigSchema = z
   .object({
-    ready: z.string().default("intake:ready"),
-    needsEvidence: z.string().default("intake:needs-evidence"),
-    maintainerDecision: z.string().default("intake:maintainer-decision"),
+    ready: z.string().min(1).default("intake:ready"),
+    needsEvidence: z.string().min(1).default("intake:needs-evidence"),
+    maintainerDecision: z.string().min(1).default("intake:maintainer-decision"),
+  })
+  .strict();
+
+export const PolicyDiscoveryConfigSchema = z
+  .object({
+    requiredFiles: z.array(z.string().min(1)).default([]),
+    optionalFiles: z
+      .array(z.string().min(1))
+      .default([
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "AGENTS.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+      ]),
+    issueTemplateDirectory: z.string().min(1).default(".github/ISSUE_TEMPLATE"),
   })
   .strict();
 
@@ -82,6 +97,17 @@ const DEFAULT_LABEL_CONFIG = {
   maintainerDecision: "intake:maintainer-decision",
 };
 
+const DEFAULT_POLICY_DISCOVERY_CONFIG = {
+  requiredFiles: [],
+  optionalFiles: [
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "AGENTS.md",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+  ],
+  issueTemplateDirectory: ".github/ISSUE_TEMPLATE",
+};
+
 export const IntakeConfigSchema = z
   .object({
     version: z.literal(1),
@@ -89,6 +115,9 @@ export const IntakeConfigSchema = z
     pullRequests: PullRequestConfigSchema.default(DEFAULT_PULL_REQUEST_CONFIG),
     issues: IssueConfigSchema.default(DEFAULT_ISSUE_CONFIG),
     labels: LabelConfigSchema.default(DEFAULT_LABEL_CONFIG),
+    policy: PolicyDiscoveryConfigSchema.default(
+      DEFAULT_POLICY_DISCOVERY_CONFIG,
+    ),
   })
   .strict();
 

@@ -18,6 +18,35 @@ const LOCAL_ACTION_ENV = {
 };
 
 describe("GitHub Action harness", () => {
+  test.each([
+    ["advisory", 0, '"mode":"advisory"'],
+    ["check", 0, '"enabled":true'],
+    ["label", 0, '"add":["intake:needs-evidence"]'],
+    ["gate", 1, '"exitCode":1'],
+  ])(
+    "runs fixture pull request in %s mode",
+    async (mode, expectedStatus, expectedOutput) => {
+      const eventPath = await writeEvent("pull_request_target");
+      const result = runAction({
+        GITHUB_EVENT_NAME: "pull_request_target",
+        GITHUB_EVENT_PATH: eventPath,
+        INPUT_MODE: mode,
+        INPUT_COMMENT: "true",
+        INPUT_LABELS: "true",
+        INPUT_CHECK_NAME: "Maintainer Intake",
+        INPUT_TOKEN: "",
+        MAINTAINER_INTAKE_DRY_RUN: "true",
+        MAINTAINER_INTAKE_FIXTURE: join(
+          REPO_ROOT,
+          "fixtures/github/pr-unready.json",
+        ),
+      });
+      expect(result.status).toBe(expectedStatus);
+      expect(result.stdout).toContain(expectedOutput);
+      expect(result.stdout).toContain("Dry-run write plan");
+    },
+  );
+
   test("runs fixture pull request in dry-run gate mode", async () => {
     const eventPath = await writeEvent("pull_request_target");
     const result = runAction({
@@ -52,6 +81,20 @@ describe("GitHub Action harness", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("unsupported_event");
   });
+
+  test("runs supported issues event from the GitHub payload", async () => {
+    const eventPath = await writeEvent("issues");
+    const result = runAction({
+      GITHUB_EVENT_NAME: "issues",
+      GITHUB_EVENT_PATH: eventPath,
+      INPUT_MODE: "advisory",
+      INPUT_TOKEN: "",
+      MAINTAINER_INTAKE_DRY_RUN: "true",
+    });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("ready_for_review");
+    expect(result.stdout).toContain("Bug report evidence");
+  });
 });
 
 async function writeEvent(eventName: string): Promise<string> {
@@ -64,6 +107,23 @@ async function writeEvent(eventName: string): Promise<string> {
       default_branch: "main",
       owner: { login: "octo" },
     },
+    issue:
+      eventName === "issues"
+        ? {
+            number: 44,
+            title: "Bug: crash on launch",
+            body: [
+              "## Reproduction",
+              "Open the app.",
+              "## Expected behavior",
+              "The app starts.",
+              "## Actual behavior",
+              "It crashes.",
+            ].join("\n"),
+            user: { login: "new-contributor" },
+            labels: [{ name: "bug" }],
+          }
+        : undefined,
     pull_request:
       eventName === "pull_request_target"
         ? {
