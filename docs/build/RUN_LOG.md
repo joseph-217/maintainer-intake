@@ -260,3 +260,27 @@ Commands and events:
 | Public CI run 27242961108                                                                                      |    success | Node 22 and Node 24 jobs passed.                                                                                                                  |
 | Public CodeQL run 27242961094                                                                                  |    success | CodeQL Analyze job passed.                                                                                                                        |
 | Remote settings and workflow read-backs                                                                        |          0 | Saved sanitized field-by-field audit in `artifacts/verification/github-settings.md`.                                                              |
+
+## 2026-06-09: Verification Gap Closure And Live Provider Smoke
+
+Purpose:
+
+- Close stale acceptance rows with behavior and tests rather than paper evidence.
+- Add policy discovery diagnostics to policy doctor.
+- Expand provider, CLI, MCP, renderer, and Action tests for required edge cases.
+- Prove live GitHub issue and pull request reads against the public repository.
+
+Commands and events:
+
+| Command or event                                                                                                            | Exit/state | Observation                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------- | ---------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run verify                                                                                                              |          0 | Full verification passed after policy discovery, provider normalization, Action mode/event, MCP error-boundary, CLI exit-code, and renderer safety tests were added. |
+| git push origin main                                                                                                        |          0 | Pushed implementation correction commit a0edd41dc9aa86000b32c6e22950a150eb355ea7.                                                                                    |
+| Public CI run 27243840809                                                                                                   |    success | Node 22 and Node 24 jobs passed on a0edd41.                                                                                                                          |
+| Public CodeQL run 27243840844                                                                                               |    success | CodeQL Analyze passed on a0edd41.                                                                                                                                    |
+| gh api repos/asdgjshjdfkjsurehjg/maintainer-intake/issues                                                                   |          0 | Created public issue #1 for controlled live issue smoke.                                                                                                             |
+| GITHUB_TOKEN from gh auth token; node dist/cli/index.js analyze-issue asdgjshjdfkjsurehjg/maintainer-intake#1 --format json |          0 | Live issue analysis returned kind issue, number 1, status ready_for_review, score 100.                                                                               |
+| gh issue close 1                                                                                                            |          0 | Closed the live smoke issue with a verification comment.                                                                                                             |
+| Temporary branch codex/live-smoke-pr and PR #2                                                                              |          0 | Created a controlled docs-only public PR for live pull-request smoke.                                                                                                |
+| GITHUB_TOKEN from gh auth token; node dist/cli/index.js analyze-pr asdgjshjdfkjsurehjg/maintainer-intake#2 --format json    |          0 | Live PR analysis returned kind pull_request, number 2, status needs_author_evidence, score 71.                                                                       |
+| gh pr close 2 --delete-branch                                                                                               |          0 | Closed the live smoke PR and deleted the remote branch.                                                                                                              |

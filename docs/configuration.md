@@ -50,5 +50,19 @@ Default shape:
       ready: intake:ready
       needsEvidence: intake:needs-evidence
       maintainerDecision: intake:maintainer-decision
+    policy:
+      requiredFiles: []
+      optionalFiles:
+        - CONTRIBUTING.md
+        - SECURITY.md
+        - AGENTS.md
+        - .github/PULL_REQUEST_TEMPLATE.md
+      issueTemplateDirectory: .github/ISSUE_TEMPLATE
 
 Unknown keys fail validation. The error includes the path so the policy can be repaired.
+
+policy doctor also performs repository policy discovery. Files listed under
+policy.requiredFiles must exist or the command exits 2. Files listed under
+policy.optionalFiles and issue forms under policy.issueTemplateDirectory are
+reported as read-only diagnostics so maintainers can see which contribution
+guidance the tool found.
