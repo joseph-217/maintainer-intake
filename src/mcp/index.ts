@@ -30,7 +30,7 @@ const configInputSchema = {
 export function createMcpServer(cwd = process.cwd()): McpServer {
   const server = new McpServer({
     name: "maintainer-intake",
-    version: "0.1.0",
+    version: "0.1.1",
   });
 
   server.registerTool(

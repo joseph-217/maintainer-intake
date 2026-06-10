@@ -53,18 +53,19 @@ try {
   const cli = join(
     temp,
     "node_modules",
-    "maintainer-intake",
-    "dist",
-    "cli",
-    "index.js",
+    ".bin",
+    process.platform === "win32"
+      ? "maintainer-intake.cmd"
+      : "maintainer-intake",
   );
-  const version = spawnSync(process.execPath, [cli, "--version"], {
+  const version = spawnSync(cli, ["--version"], {
     cwd: temp,
     encoding: "utf8",
+    shell: process.platform === "win32",
   });
   process.stdout.write(version.stdout);
   process.stderr.write(version.stderr);
-  if (version.status !== 0 || version.stdout.trim() !== "0.1.0") {
+  if (version.status !== 0 || version.stdout.trim() !== "0.1.1") {
     process.exit(version.status ?? 1);
   }
 
@@ -77,11 +78,12 @@ try {
     "pr-ready.json",
   );
   const analyze = spawnSync(
-    process.execPath,
-    [cli, "analyze-pr", "--fixture", fixture, "--format", "json"],
+    cli,
+    ["analyze-pr", "--fixture", fixture, "--format", "json"],
     {
       cwd: temp,
       encoding: "utf8",
+      shell: process.platform === "win32",
     },
   );
   process.stdout.write(analyze.stdout);

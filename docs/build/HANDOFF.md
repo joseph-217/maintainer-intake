@@ -31,7 +31,7 @@ Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 
 ## Known Blockers
 
-- npm publication is pending npm authentication. npm whoami returned ENEEDAUTH.
+- None for npm publication. Version 0.1.0 was published but its installed CLI did not execute through npm's symlink; version 0.1.1 corrects the entrypoint and is the supported release.
 
 ## GitHub Publication State
 
@@ -39,7 +39,7 @@ The repository is public, pushed, and configured. See artifacts/verification/git
 
 ## npm Publication State
 
-The package name returned E404 from npm registry lookup, but no publication was attempted because npm auth is absent.
+The package is published at https://www.npmjs.com/package/maintainer-intake. Registry ownership is `asdgjshjdfkjsurehjg`; version 0.1.1 is the supported release after packed-install and registry-install CLI verification.
 
 ## Resume Command
 

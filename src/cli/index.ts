@@ -1,7 +1,8 @@
 #!/usr/bin/env node
+import { realpathSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import { Command, CommanderError, Option } from "commander";
 import {
   ConfigError,
@@ -23,7 +24,7 @@ import {
 } from "../github/octokit-provider.js";
 import { parseGitHubReference } from "../github/reference.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const DEFAULT_CONFIG_PATH = ".github/maintainer-intake.yml";
 
 type CliIo = {
@@ -358,9 +359,18 @@ function defaultIo(): CliIo {
   };
 }
 
-const isEntrypoint =
-  process.argv[1] !== undefined &&
-  import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+const isEntrypoint = (() => {
+  if (process.argv[1] === undefined) return false;
+
+  try {
+    return (
+      realpathSync(fileURLToPath(import.meta.url)) ===
+      realpathSync(process.argv[1])
+    );
+  } catch {
+    return false;
+  }
+})();
 
 if (isEntrypoint) {
   runCli().then((code) => {

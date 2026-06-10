@@ -1,6 +1,6 @@
 {
   "name": "maintainer-intake",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deterministic contribution-intake checks for open-source maintainers.",
   "type": "module",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "node": ">=22"
   },
   "bin": {
-    "maintainer-intake": "./dist/cli/index.js"
+    "maintainer-intake": "dist/cli/index.js"
   },
   "exports": {
     ".": {

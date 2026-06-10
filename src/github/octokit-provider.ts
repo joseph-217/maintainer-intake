@@ -14,7 +14,7 @@ export type GitHubWriteOptions = {
 export function createOctokit(token: string): Octokit {
   return new Octokit({
     auth: token,
-    userAgent: "maintainer-intake/0.1.0",
+    userAgent: "maintainer-intake/0.1.1",
   });
 }
 

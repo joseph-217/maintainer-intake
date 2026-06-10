@@ -13,7 +13,7 @@ const CLI = [
 describe("CLI process behavior", () => {
   test("prints help and version", () => {
     expect(run(["--help"]).stdout).toContain("maintainer-intake");
-    expect(run(["--version"]).stdout.trim()).toBe("0.1.0");
+    expect(run(["--version"]).stdout.trim()).toBe("0.1.1");
   });
 
   test("previews init output and writes idempotently", async () => {

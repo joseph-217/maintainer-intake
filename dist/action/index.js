@@ -56348,7 +56348,7 @@ const dist_src_Octokit = Octokit.plugin(requestLog, legacyRestEndpointMethods, p
 function createOctokit(token) {
     return new dist_src_Octokit({
         auth: token,
-        userAgent: "maintainer-intake/0.1.0",
+        userAgent: "maintainer-intake/0.1.1",
     });
 }
 async function loadPullRequestFromGitHub(reference, token) {
