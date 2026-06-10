@@ -2,7 +2,7 @@
 
 ## Current State
 
-maintainer-intake is implemented, locally verified, publicly pushed, and ready for corrected v0.1.0 tag/release targeting after the final evidence commit passes public CI.
+maintainer-intake is implemented, locally verified, publicly released, and published to npm. Version 0.1.1 is the supported release.
 
 Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 
@@ -17,7 +17,7 @@ Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 ## Current Branch And Commit
 
 - Branch: main
-- Latest pushed implementation commit: a0edd41dc9aa86000b32c6e22950a150eb355ea7
+- Latest pushed release commit: efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f
 
 ## Commands Last Run
 
@@ -26,6 +26,9 @@ Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 | npm run verify                |          0 | Full local verification passed after the policy/provider/action/MCP test expansion. |
 | Public CI run 27243840809     |    success | Node 22 and Node 24 jobs passed on a0edd41.                                         |
 | Public CodeQL run 27243840844 |    success | CodeQL Analyze passed on a0edd41.                                                   |
+| Public CI run 27298546865     |    success | Node 22 and Node 24 passed on the 0.1.1 release commit.                             |
+| Public CodeQL run 27298546835 |    success | CodeQL passed on the 0.1.1 release commit.                                          |
+| npm registry install          |          0 | Fresh install ran version 0.1.1 and fixture analysis through the npm binary.        |
 | Live analyze-issue on #1      |          0 | Returned issue #1 with status ready_for_review and score 100.                       |
 | Live analyze-pr on #2         |          0 | Returned pull_request #2 with status needs_author_evidence and score 71.            |
 
@@ -35,7 +38,7 @@ Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 
 ## GitHub Publication State
 
-The repository is public, pushed, and configured. See artifacts/verification/github-settings.md for the settings audit. The existing v0.1.0 release URL is https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/releases/tag/v0.1.0.
+The repository is public, pushed, and configured. See artifacts/verification/github-settings.md for the settings audit. The supported release is https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/releases/tag/v0.1.1. Tags `v0.1.1` and `v0` dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
 
 ## npm Publication State
 
@@ -48,4 +51,4 @@ From the product repository root:
     git status --short
     gh run list --repo asdgjshjdfkjsurehjg/maintainer-intake --limit 5
 
-Next required step: push this final evidence update, wait for public CI/CodeQL, then make v0.1.0 and v0 point at that final verified commit.
+No release blocker remains. Future releases should use the packed-install npm binary smoke before publication.
