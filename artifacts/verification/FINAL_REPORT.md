@@ -7,7 +7,7 @@ This report records the completed local, package, public repository, live-provid
 ## Final Product Commit
 
 - Supported implementation and release commit: efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f
-- Current evidence documentation commit: 5423d06164ec32b6dc6ac5d2c83d76f7a88f3024
+- Documentation completion audit commit: 920265821b0d6dfc39a09919db5b1002856ef6f2
 - Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 - Release URL: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/releases/tag/v0.1.1
 - Floating Action tag: v0
@@ -37,6 +37,11 @@ The evidence documentation commit also passed:
 
 - CI run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27298889978
 - CodeQL run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27298889984
+
+The documentation completion audit commit passed:
+
+- CI run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27303902232
+- CodeQL run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27303902220
 
 ## Verification Commands
 
