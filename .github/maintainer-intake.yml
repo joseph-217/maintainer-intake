@@ -1,0 +1,45 @@
+version: 1
+mode: advisory
+pullRequests:
+  requireLinkedIssue: true
+  requireTestEvidence: true
+  requireGeneratedAcknowledgement: false
+  largeChangeThreshold: 500
+  requiredSections:
+    - Summary
+    - Linked issue
+    - Tests
+    - Scope
+  riskyPaths:
+    - pattern: ".github/workflows/**"
+      require:
+        - security-impact
+issues:
+  bug:
+    require:
+      - reproduction
+      - expected-behavior
+      - actual-behavior
+  feature:
+    require:
+      - use-case
+      - non-goals
+  security:
+    require:
+      - affected-version
+      - component
+      - impact
+      - reproduction
+  duplicateSearch: false
+labels:
+  ready: intake:ready
+  needsEvidence: intake:needs-evidence
+  maintainerDecision: intake:maintainer-decision
+policy:
+  requiredFiles:
+    - CONTRIBUTING.md
+    - SECURITY.md
+  optionalFiles:
+    - AGENTS.md
+    - .github/PULL_REQUEST_TEMPLATE.md
+  issueTemplateDirectory: .github/ISSUE_TEMPLATE

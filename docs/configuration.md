@@ -61,6 +61,8 @@ Default shape:
 
 Unknown keys fail validation. The error includes the path so the policy can be repaired.
 
+Configured PR sections and issue evidence fields are structural evidence checks. A field is recognized as a Markdown heading or label with a non-placeholder value, for example `## Expected behavior` followed by content or `Expected behavior: the command exits 0`. Empty headings, template comments, `TBD`, and an unlabeled bare keyword do not count.
+
 policy doctor also performs repository policy discovery. Files listed under
 policy.requiredFiles must exist or the command exits 2. Files listed under
 policy.optionalFiles and issue forms under policy.issueTemplateDirectory are

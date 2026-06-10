@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security report
-    url: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/security/advisories/new
+    url: https://github.com/joseph-217/maintainer-intake/security/advisories/new
     about: Please report suspected vulnerabilities privately.

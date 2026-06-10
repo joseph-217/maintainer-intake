@@ -19,12 +19,16 @@ export async function loadConfigFromFile(path: string): Promise<IntakeConfig> {
     throw error;
   }
 
+  return parseConfigText(raw, path);
+}
+
+export function parseConfigText(raw: string, source: string): IntakeConfig {
   let value: unknown;
   try {
-    value = path.endsWith(".json") ? JSON.parse(raw) : YAML.parse(raw);
+    value = source.endsWith(".json") ? JSON.parse(raw) : YAML.parse(raw);
   } catch (error) {
     throw new ConfigError(
-      "Invalid config syntax in " + path + ": " + (error as Error).message,
+      "Invalid config syntax in " + source + ": " + (error as Error).message,
     );
   }
 

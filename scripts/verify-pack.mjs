@@ -1,9 +1,12 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const temp = await mkdtemp(join(tmpdir(), "maintainer-intake-pack-"));
+const packageJson = JSON.parse(
+  await readFile(new URL("../package.json", import.meta.url), "utf8"),
+);
 let tarball;
 
 try {
@@ -65,7 +68,7 @@ try {
   });
   process.stdout.write(version.stdout);
   process.stderr.write(version.stderr);
-  if (version.status !== 0 || version.stdout.trim() !== "0.1.1") {
+  if (version.status !== 0 || version.stdout.trim() !== packageJson.version) {
     process.exit(version.status ?? 1);
   }
 

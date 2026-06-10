@@ -4,14 +4,14 @@ import {
   changedLineCount,
   hasAnyLinkedIssue,
   hasLinkedIssueExemption,
-  hasSection,
+  hasSectionContent,
   hasTestEvidence,
   hasTestExemption,
   isDependencyOnly,
   isDocsOnly,
   isFormattingOnly,
   matchesAnyPath,
-  patchContains,
+  addedPatchContains,
   textIncludes,
 } from "./helpers.js";
 
@@ -39,7 +39,7 @@ function requiredTemplateSections(
   config: IntakeConfig,
 ): RuleResult {
   const missing = config.pullRequests.requiredSections.filter(
-    (section) => !hasSection(context.body, section),
+    (section) => !hasSectionContent(context.body, section),
   );
   return {
     ruleId: "MI-PR-TEMPLATE",
@@ -49,12 +49,14 @@ function requiredTemplateSections(
     outcome: missing.length === 0 ? "pass" : "fail",
     evidence:
       missing.length === 0
-        ? ["All configured sections are present."]
-        : ["Missing sections: " + missing.join(", ") + "."],
+        ? ["All configured sections contain evidence."]
+        : ["Missing or empty sections: " + missing.join(", ") + "."],
     remediation:
       missing.length === 0
         ? undefined
-        : "Add the missing PR template sections: " + missing.join(", ") + ".",
+        : "Add meaningful content to the PR template sections: " +
+          missing.join(", ") +
+          ".",
   };
 }
 
@@ -311,9 +313,9 @@ function riskyPathEvidence(
 
 function ciWeakening(context: ContributionContext): RuleResult {
   const workflowFiles = matchesAnyPath(context.files, ".github/workflows/**");
-  const suspiciousPatch = patchContains(
+  const suspiciousPatch = addedPatchContains(
     context.files,
-    /skip|continue-on-error:\s*true|pull_request_target|permissions:\s*write/i,
+    /\bskip\b|continue-on-error:\s*true|pull_request_target|permissions:\s*(?:write|write-all)|(?:actions|checks|contents|deployments|issues|packages|pages|pull-requests|security-events|statuses):\s*write/i,
   );
   const removedTests = context.files.some(
     (file) =>
@@ -344,8 +346,8 @@ function ciWeakening(context: ContributionContext): RuleResult {
         ? String(workflowFiles.length) + " workflow file(s) changed."
         : "No workflow file path changed.",
       suspiciousPatch
-        ? "Patch contains CI-risk keywords."
-        : "No CI-risk keyword found.",
+        ? "Added patch lines contain CI-risk indicators."
+        : "No CI-risk indicator was added.",
       removedTests
         ? "A test-like file was removed."
         : "No removed test-like file found.",

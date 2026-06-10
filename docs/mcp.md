@@ -2,7 +2,7 @@
 
 Run the published stdio server without a global install:
 
-    npx --yes maintainer-intake@0.1.1 mcp
+    npx --yes maintainer-intake@0.1.2 mcp
 
 With a global install:
 
@@ -14,7 +14,7 @@ Generic MCP client configuration:
       "mcpServers": {
         "maintainer-intake": {
           "command": "npx",
-          "args": ["--yes", "maintainer-intake@0.1.1", "mcp"]
+          "args": ["--yes", "maintainer-intake@0.1.2", "mcp"]
         }
       }
     }

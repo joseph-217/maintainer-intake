@@ -4,7 +4,7 @@
 
 maintainer-intake is implemented, locally verified, publicly released, and published to npm. Version 0.1.1 is the supported release.
 
-Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
+Public repository: https://github.com/joseph-217/maintainer-intake
 
 ## Last Completed Acceptance Rows
 
@@ -38,17 +38,17 @@ Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
 
 ## GitHub Publication State
 
-The repository is public, pushed, and configured. See artifacts/verification/github-settings.md for the settings audit. The supported release is https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/releases/tag/v0.1.1. Tags `v0.1.1` and `v0` dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
+The repository is public, pushed, and configured. See artifacts/verification/github-settings.md for the settings audit. The supported release is https://github.com/joseph-217/maintainer-intake/releases/tag/v0.1.1. Tags `v0.1.1` and `v0` dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
 
 ## npm Publication State
 
-The package is published at https://www.npmjs.com/package/maintainer-intake. Registry ownership is `asdgjshjdfkjsurehjg`; version 0.1.1 is the supported release after packed-install and registry-install CLI verification.
+The package is published at https://www.npmjs.com/package/maintainer-intake. Registry ownership remains under the verified npm publisher account; version 0.1.1 is the supported release after packed-install and registry-install CLI verification.
 
 ## Resume Command
 
 From the product repository root:
 
     git status --short
-    gh run list --repo asdgjshjdfkjsurehjg/maintainer-intake --limit 5
+    gh run list --repo joseph-217/maintainer-intake --limit 5
 
 No release blocker remains. Future releases should use the packed-install npm binary smoke before publication.

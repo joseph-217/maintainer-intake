@@ -8,15 +8,15 @@ This report records the completed local, package, public repository, live-provid
 
 - Supported implementation and release commit: efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f
 - Documentation completion audit commit: 920265821b0d6dfc39a09919db5b1002856ef6f2
-- Public repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
-- Release URL: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/releases/tag/v0.1.1
+- Public repository: https://github.com/joseph-217/maintainer-intake
+- Release URL: https://github.com/joseph-217/maintainer-intake/releases/tag/v0.1.1
 - Floating Action tag: v0
 
 The v0.1.1 and v0 tags dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
 
 ## Public Repository
 
-- Owner: asdgjshjdfkjsurehjg
+- GitHub owner: joseph-217
 - Visibility: public
 - Default branch: main
 - Description: Deterministic contribution-intake checks for open-source maintainers.
@@ -30,18 +30,18 @@ The v0.1.1 and v0 tags dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
 
 The v0.1.1 release commit passed public CI and CodeQL:
 
-- CI run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27298546865
-- CodeQL run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27298546835
+- CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27298546865
+- CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27298546835
 
 The evidence documentation commit also passed:
 
-- CI run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27298889978
-- CodeQL run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27298889984
+- CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27298889978
+- CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27298889984
 
 The documentation completion audit commit passed:
 
-- CI run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27303902232
-- CodeQL run: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27303902220
+- CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27303902232
+- CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27303902220
 
 ## Verification Commands
 
@@ -95,7 +95,7 @@ Unsupported or account-dependent settings:
 ## npm Publication State
 
 - Package: https://www.npmjs.com/package/maintainer-intake
-- Owner: `asdgjshjdfkjsurehjg`
+- npm ownership: verified through the separate npm publisher account
 - `latest`: `0.1.1`
 - A clean registry install ran `maintainer-intake --version` and a ready-PR fixture analysis successfully through the package-manager binary.
 - Version `0.1.0` is deprecated with an upgrade warning because its installed CLI did not launch through npm symlinks.

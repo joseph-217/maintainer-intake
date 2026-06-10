@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { describe, expect, test } from "vitest";
+import packageJson from "../../package.json" with { type: "json" };
 
 const REPO_ROOT = process.cwd();
 const CLI = [
@@ -13,7 +14,7 @@ const CLI = [
 describe("CLI process behavior", () => {
   test("prints help and version", () => {
     expect(run(["--help"]).stdout).toContain("maintainer-intake");
-    expect(run(["--version"]).stdout.trim()).toBe("0.1.1");
+    expect(run(["--version"]).stdout.trim()).toBe(packageJson.version);
   });
 
   test("previews init output and writes idempotently", async () => {

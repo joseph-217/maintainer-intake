@@ -46,7 +46,7 @@ Commands run:
 | `git -C maintainer-intake status --short`     |    0 | Only baseline files were untracked before first commit.            |
 | `git -C maintainer-intake diff --check`       |    0 | No whitespace errors reported.                                     |
 | `git -C maintainer-intake config user.name`   |    0 | Returned `Joseph`.                                                 |
-| `git -C maintainer-intake config user.email`  |    0 | Returned `128547272+asdgjshjdfkjsurehjg@users.noreply.github.com`. |
+| `git -C maintainer-intake config user.email`  |    0 | Returned the verified ID-based GitHub noreply address.             |
 | Private-marker scan from the parent workspace |    0 | No private planning or local-only markers found in baseline files. |
 
 ## 2026-06-09: Package And Shared Engine Slice
@@ -248,18 +248,18 @@ Purpose:
 
 Commands and events:
 
-| Command or event                                                                                               | Exit/state | Observation                                                                                                                                       |
-| -------------------------------------------------------------------------------------------------------------- | ---------: | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| gh repo create asdgjshjdfkjsurehjg/maintainer-intake --public --disable-wiki --source=. --remote=origin --push |          0 | Created https://github.com/asdgjshjdfkjsurehjg/maintainer-intake and pushed `deaa818` to `main`.                                                  |
-| gh repo edit settings/topics command                                                                           |          0 | Discussions enabled, projects disabled, wiki disabled, merge settings and topics applied.                                                         |
-| Security feature API mutations                                                                                 |          0 | Vulnerability alerts, automated security fixes, secret scanning, push protection, and private vulnerability reporting mutations returned success. |
-| Branch protection API mutation                                                                                 |          0 | `main` read back with force pushes and deletions disabled, with no required status checks or required reviews.                                    |
-| Initial CI run 27242867100                                                                                     |    failure | Action harness tests inherited GitHub runner file-command env vars, so `@actions/core.setOutput` wrote to `GITHUB_OUTPUT` instead of stdout.      |
-| Local regression fix verification                                                                              |          0 | `npm run test:e2e`, `npm run verify`, and a local E2E run with `GITHUB_OUTPUT`/`GITHUB_STEP_SUMMARY` set all passed.                              |
-| git push origin main                                                                                           |          0 | Pushed fix commit `860632dca3e0dcb3a29200e66539b6b57de091b6`.                                                                                     |
-| Public CI run 27242961108                                                                                      |    success | Node 22 and Node 24 jobs passed.                                                                                                                  |
-| Public CodeQL run 27242961094                                                                                  |    success | CodeQL Analyze job passed.                                                                                                                        |
-| Remote settings and workflow read-backs                                                                        |          0 | Saved sanitized field-by-field audit in `artifacts/verification/github-settings.md`.                                                              |
+| Command or event                                                                                 | Exit/state | Observation                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------ | ---------: | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| gh repo create OWNER/maintainer-intake --public --disable-wiki --source=. --remote=origin --push |          0 | Created the public repository and pushed `deaa818` to `main`; its canonical URL is now https://github.com/joseph-217/maintainer-intake.           |
+| gh repo edit settings/topics command                                                             |          0 | Discussions enabled, projects disabled, wiki disabled, merge settings and topics applied.                                                         |
+| Security feature API mutations                                                                   |          0 | Vulnerability alerts, automated security fixes, secret scanning, push protection, and private vulnerability reporting mutations returned success. |
+| Branch protection API mutation                                                                   |          0 | `main` read back with force pushes and deletions disabled, with no required status checks or required reviews.                                    |
+| Initial CI run 27242867100                                                                       |    failure | Action harness tests inherited GitHub runner file-command env vars, so `@actions/core.setOutput` wrote to `GITHUB_OUTPUT` instead of stdout.      |
+| Local regression fix verification                                                                |          0 | `npm run test:e2e`, `npm run verify`, and a local E2E run with `GITHUB_OUTPUT`/`GITHUB_STEP_SUMMARY` set all passed.                              |
+| git push origin main                                                                             |          0 | Pushed fix commit `860632dca3e0dcb3a29200e66539b6b57de091b6`.                                                                                     |
+| Public CI run 27242961108                                                                        |    success | Node 22 and Node 24 jobs passed.                                                                                                                  |
+| Public CodeQL run 27242961094                                                                    |    success | CodeQL Analyze job passed.                                                                                                                        |
+| Remote settings and workflow read-backs                                                          |          0 | Saved sanitized field-by-field audit in `artifacts/verification/github-settings.md`.                                                              |
 
 ## 2026-06-09: Verification Gap Closure And Live Provider Smoke
 
@@ -272,18 +272,18 @@ Purpose:
 
 Commands and events:
 
-| Command or event                                                                                                            | Exit/state | Observation                                                                                                                                                          |
-| --------------------------------------------------------------------------------------------------------------------------- | ---------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| npm run verify                                                                                                              |          0 | Full verification passed after policy discovery, provider normalization, Action mode/event, MCP error-boundary, CLI exit-code, and renderer safety tests were added. |
-| git push origin main                                                                                                        |          0 | Pushed implementation correction commit a0edd41dc9aa86000b32c6e22950a150eb355ea7.                                                                                    |
-| Public CI run 27243840809                                                                                                   |    success | Node 22 and Node 24 jobs passed on a0edd41.                                                                                                                          |
-| Public CodeQL run 27243840844                                                                                               |    success | CodeQL Analyze passed on a0edd41.                                                                                                                                    |
-| gh api repos/asdgjshjdfkjsurehjg/maintainer-intake/issues                                                                   |          0 | Created public issue #1 for controlled live issue smoke.                                                                                                             |
-| GITHUB_TOKEN from gh auth token; node dist/cli/index.js analyze-issue asdgjshjdfkjsurehjg/maintainer-intake#1 --format json |          0 | Live issue analysis returned kind issue, number 1, status ready_for_review, score 100.                                                                               |
-| gh issue close 1                                                                                                            |          0 | Closed the live smoke issue with a verification comment.                                                                                                             |
-| Temporary branch codex/live-smoke-pr and PR #2                                                                              |          0 | Created a controlled docs-only public PR for live pull-request smoke.                                                                                                |
-| GITHUB_TOKEN from gh auth token; node dist/cli/index.js analyze-pr asdgjshjdfkjsurehjg/maintainer-intake#2 --format json    |          0 | Live PR analysis returned kind pull_request, number 2, status needs_author_evidence, score 71.                                                                       |
-| gh pr close 2 --delete-branch                                                                                               |          0 | Closed the live smoke PR and deleted the remote branch.                                                                                                              |
+| Command or event                                                                                              | Exit/state | Observation                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------- | ---------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run verify                                                                                                |          0 | Full verification passed after policy discovery, provider normalization, Action mode/event, MCP error-boundary, CLI exit-code, and renderer safety tests were added. |
+| git push origin main                                                                                          |          0 | Pushed implementation correction commit a0edd41dc9aa86000b32c6e22950a150eb355ea7.                                                                                    |
+| Public CI run 27243840809                                                                                     |    success | Node 22 and Node 24 jobs passed on a0edd41.                                                                                                                          |
+| Public CodeQL run 27243840844                                                                                 |    success | CodeQL Analyze passed on a0edd41.                                                                                                                                    |
+| gh api repos/OWNER/maintainer-intake/issues                                                                   |          0 | Created public issue #1 for controlled live issue smoke.                                                                                                             |
+| GITHUB_TOKEN from gh auth token; node dist/cli/index.js analyze-issue OWNER/maintainer-intake#1 --format json |          0 | Live issue analysis returned kind issue, number 1, status ready_for_review, score 100.                                                                               |
+| gh issue close 1                                                                                              |          0 | Closed the live smoke issue with a verification comment.                                                                                                             |
+| Temporary branch codex/live-smoke-pr and PR #2                                                                |          0 | Created a controlled docs-only public PR for live pull-request smoke.                                                                                                |
+| GITHUB_TOKEN from gh auth token; node dist/cli/index.js analyze-pr OWNER/maintainer-intake#2 --format json    |          0 | Live PR analysis returned kind pull_request, number 2, status needs_author_evidence, score 71.                                                                       |
+| gh pr close 2 --delete-branch                                                                                 |          0 | Closed the live smoke PR and deleted the remote branch.                                                                                                              |
 
 ## 2026-06-10: npm Publication And v0.1.1 Correction
 
@@ -297,7 +297,7 @@ Commands and events:
 
 | Command or event                                 | Exit/state | Observation                                                                                                |
 | ------------------------------------------------ | ---------: | ---------------------------------------------------------------------------------------------------------- |
-| npm profile get; npm whoami                      |          0 | npm 2FA was enabled and owner `asdgjshjdfkjsurehjg` was verified.                                          |
+| npm profile get; npm whoami                      |          0 | npm 2FA and the separate npm publisher account were verified.                                              |
 | npm publish --access public                      |          0 | Published `maintainer-intake@0.1.0`; registry smoke then exposed a symlink entrypoint defect.              |
 | npm run verify:pack after entrypoint/test repair |          0 | The real `node_modules/.bin/maintainer-intake` executable printed 0.1.1 and analyzed the ready PR fixture. |
 | npm run verify                                   |          0 | Full local lane passed on commit `efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f`.                               |
@@ -307,3 +307,42 @@ Commands and events:
 | Clean registry install and fixture analysis      |          0 | Installed CLI printed 0.1.1 and returned `ready_for_review` with score 100.                                |
 | npm deprecate maintainer-intake@0.1.0            |          0 | Added an upgrade warning directing users to 0.1.1 or later.                                                |
 | Evidence docs CI 27298889978; CodeQL 27298889984 |    success | Final evidence-only commit passed public CI and CodeQL.                                                    |
+
+## 2026-06-10: GitHub Account Rename
+
+Purpose:
+
+- Adopt `joseph-217` as the canonical GitHub login after the account rename.
+- Remove personal username evaluation from public project documentation.
+- Recheck repository access, release continuity, Action references, package metadata, and local commit identity.
+
+Commands and events:
+
+| Command or event                               | Exit/state | Observation                                                                                                      |
+| ---------------------------------------------- | ---------: | ---------------------------------------------------------------------------------------------------------------- |
+| `gh api user --jq .login`                      |          0 | Returned `joseph-217` for unchanged GitHub user ID `128547272`; no CLI reconnection was required.                |
+| Repository API read-back                       |          0 | Canonical repository owner and URL are `joseph-217/maintainer-intake`; admin and push permissions remain active. |
+| Product `origin` and repository-local identity |          0 | Remote uses the canonical repository URL; commit email uses `128547272+joseph-217@users.noreply.github.com`.     |
+| Release and `v0` ref read-back                 |          0 | Release `v0.1.1` and floating Action tag remain available after the rename.                                      |
+
+## 2026-06-10: v0.1.2 Identity And Evidence Hardening
+
+Purpose:
+
+- Address the source/docs review without adding speculative product scope.
+- Make `joseph-217` the single canonical GitHub identity in source and metadata.
+- Fix repository policy loading in checkout-free Action runs.
+- Reduce false confidence from empty evidence fields and removed CI-risk lines.
+- Provide a read-only Action start, permission rationale, and visible packet output.
+
+Commands and events:
+
+| Command or event                                               | Exit/state | Observation                                                                                                                            |
+| -------------------------------------------------------------- | ---------: | -------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub identity, repository, release, and permission read-back |          0 | API identity is `joseph-217`, user ID `128547272`; repository admin/push access and v0.1.1 release continuity remain active.           |
+| npm audit --json                                               |          0 | Zero known vulnerabilities.                                                                                                            |
+| Focused unit, integration, and Action E2E                      |          0 | Empty/placeholder evidence, inline evidence, added-line CI risk, remote config, and step-summary cases passed.                         |
+| npm run verify                                                 |          0 | Format, lint, typecheck, 19 unit tests, 8 integration tests, 16 E2E tests, builds, bundle, packed install, and security checks passed. |
+| Node 22.22.3 and Node 24.16.0 full verification                |          0 | The complete `npm run verify` lane passed under both supported runtime lines.                                                          |
+| npm run verify:pack                                            |          0 | Packed `maintainer-intake@0.1.2` installed cleanly; CLI printed 0.1.2 and analyzed the ready fixture.                                  |
+| Canonical identity and personal-assessment scans               |          0 | No former GitHub login or username-risk language remains in current parent or product files.                                           |

@@ -11,6 +11,7 @@ import type { ContributionContext } from "../engine/types.js";
 import { loadFixtureBundle } from "../github/fixture-provider.js";
 import {
   applyGitHubWritePlan,
+  loadConfigFromGitHub,
   loadIssueFromGitHub,
   loadPullRequestFromGitHub,
 } from "../github/octokit-provider.js";
@@ -45,18 +46,34 @@ export async function runAction(): Promise<void> {
     return;
   }
 
-  let config: IntakeConfig =
-    loaded.config ?? (await loadConfigFromFile(configPath));
+  let config: IntakeConfig;
+  if (loaded.config) {
+    config = loaded.config;
+  } else if (loaded.reference && token) {
+    config = await loadConfigFromGitHub(
+      loaded.reference,
+      token,
+      configPath,
+      loaded.context.repository.defaultBranch,
+    );
+  } else {
+    config = await loadConfigFromFile(configPath);
+  }
   if (mode) {
     config = parseConfig({ ...config, mode });
   }
 
   const result = evaluateContribution(loaded.context, config);
+  const renderedPacket = renderResult(result, "markdown");
   const renderedComment = renderResult(result, "comment");
   core.setOutput("status", result.status);
   core.setOutput("score", String(result.score));
   core.setOutput("packet-summary", result.packet.summary);
   core.setOutput("result-json", JSON.stringify(result));
+  core.info(renderedPacket);
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    await core.summary.addRaw(renderedPacket).write();
+  }
 
   if (dryRun) {
     core.info("Dry-run write plan: " + JSON.stringify(result.writePlan));

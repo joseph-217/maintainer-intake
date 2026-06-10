@@ -1,8 +1,10 @@
 # GitHub Settings Audit
 
-Audit date: 2026-06-09
+Initial audit date: 2026-06-09
 
-Repository: https://github.com/asdgjshjdfkjsurehjg/maintainer-intake
+Canonical owner and URL rechecked after the account rename on 2026-06-10.
+
+Repository: https://github.com/joseph-217/maintainer-intake
 
 Audited commit: `860632dca3e0dcb3a29200e66539b6b57de091b6`
 
@@ -10,11 +12,11 @@ Audited commit: `860632dca3e0dcb3a29200e66539b6b57de091b6`
 
 | Field                  | Read-back value                                                         |
 | ---------------------- | ----------------------------------------------------------------------- |
-| Owner/name             | `asdgjshjdfkjsurehjg/maintainer-intake`                                 |
+| Owner/name             | `joseph-217/maintainer-intake`                                          |
 | Visibility             | `PUBLIC`                                                                |
 | Default branch         | `main`                                                                  |
 | Description            | `Deterministic contribution-intake checks for open-source maintainers.` |
-| URL                    | https://github.com/asdgjshjdfkjsurehjg/maintainer-intake                |
+| URL                    | https://github.com/joseph-217/maintainer-intake                         |
 | License                | MIT License                                                             |
 | Issues                 | enabled                                                                 |
 | Discussions            | enabled                                                                 |
@@ -77,10 +79,10 @@ This protects against force pushes and branch deletion without adding required r
 
 ## Initial Public Runs
 
-| Workflow |      Run ID | Conclusion | URL                                                                               |
-| -------- | ----------: | ---------- | --------------------------------------------------------------------------------- |
-| CI       | 27242961108 | success    | https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27242961108 |
-| CodeQL   | 27242961094 | success    | https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/actions/runs/27242961094 |
+| Workflow |      Run ID | Conclusion | URL                                                                      |
+| -------- | ----------: | ---------- | ------------------------------------------------------------------------ |
+| CI       | 27242961108 | success    | https://github.com/joseph-217/maintainer-intake/actions/runs/27242961108 |
+| CodeQL   | 27242961094 | success    | https://github.com/joseph-217/maintainer-intake/actions/runs/27242961094 |
 
 CI job read-back:
 

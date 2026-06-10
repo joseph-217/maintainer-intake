@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -67,6 +67,32 @@ describe("GitHub Action harness", () => {
     expect(result.stdout).toContain("status");
     expect(result.stdout).toContain("needs_author_evidence");
     expect(result.stdout).toContain("Dry-run write plan");
+  });
+
+  test("writes the full packet to the Actions step summary", async () => {
+    const eventPath = await writeEvent("pull_request_target");
+    const dir = await mkdtemp(join(tmpdir(), "maintainer-intake-summary-"));
+    const summaryPath = join(dir, "summary.md");
+    await writeFile(summaryPath, "", "utf8");
+    const result = runAction({
+      GITHUB_EVENT_NAME: "pull_request_target",
+      GITHUB_EVENT_PATH: eventPath,
+      GITHUB_STEP_SUMMARY: summaryPath,
+      INPUT_MODE: "advisory",
+      INPUT_COMMENT: "false",
+      INPUT_LABELS: "false",
+      INPUT_TOKEN: "",
+      MAINTAINER_INTAKE_DRY_RUN: "true",
+      MAINTAINER_INTAKE_FIXTURE: join(
+        REPO_ROOT,
+        "fixtures/github/pr-unready.json",
+      ),
+    });
+    expect(result.status).toBe(0);
+    const summary = await readFile(summaryPath, "utf8");
+    expect(summary).toContain("# Maintainer Intake Packet");
+    expect(summary).toContain("needs_author_evidence");
+    expect(summary).toContain("Add meaningful content");
   });
 
   test("returns neutral output for unsupported events", async () => {

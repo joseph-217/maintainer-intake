@@ -6,11 +6,71 @@ export function textIncludes(body: string, terms: string[]): boolean {
   return terms.some((term) => normalized.includes(term.toLowerCase()));
 }
 
-export function hasSection(body: string, section: string): boolean {
-  const escaped = escapeRegExp(section);
-  const heading = new RegExp("(^|\\n)#{1,6}\\s*" + escaped + "\\b", "i");
-  const label = new RegExp("(^|\\n)" + escaped + "\\s*:", "i");
-  return heading.test(body) || label.test(body);
+export function hasSectionContent(body: string, section: string): boolean {
+  const lines = body.split(/\r?\n/);
+  const escaped = escapeRegExp(section.trim().replace(/[-_]+/g, " "));
+  const heading = new RegExp("^#{1,6}\\s*" + escaped + "\\s*#*\\s*$", "i");
+  const label = new RegExp("^\\s*" + escaped + "\\s*:\\s*(.*)$", "i");
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
+    const labelMatch = line.match(label);
+    if (labelMatch) {
+      const block = [labelMatch[1] ?? ""];
+      for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+        const candidate = lines[cursor] ?? "";
+        if (
+          /^#{1,6}\s+/.test(candidate) ||
+          /^\s*[\w][\w -]*:\s*/.test(candidate)
+        ) {
+          break;
+        }
+        block.push(candidate);
+      }
+      if (hasMeaningfulContent(block.join("\n"))) return true;
+    }
+
+    if (heading.test(line)) {
+      const block: string[] = [];
+      for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+        const candidate = lines[cursor] ?? "";
+        if (/^#{1,6}\s+/.test(candidate)) break;
+        block.push(candidate);
+      }
+      if (hasMeaningfulContent(block.join("\n"))) return true;
+    }
+  }
+
+  return false;
+}
+
+export function hasEvidenceField(body: string, field: string): boolean {
+  const label = field.trim().replace(/[-_]+/g, " ");
+  if (hasSectionContent(body, label)) return true;
+
+  const escaped = escapeRegExp(label);
+  const inline = new RegExp(
+    "(?:^|[\\n.!?]\\s*)" +
+      escaped +
+      "\\s*:\\s*([\\s\\S]*?)(?=\\s+[A-Za-z][A-Za-z0-9 _-]{1,40}:|$)",
+    "i",
+  );
+  const match = body.match(inline);
+  return match ? hasMeaningfulContent(match[1] ?? "") : false;
+}
+
+function hasMeaningfulContent(value: string): boolean {
+  const normalized = value
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/^\s*[-*]\s*\[[ xX]\]\s*/gm, " ")
+    .replace(/[`*_>#]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!/[\p{L}\p{N}]/u.test(normalized)) return false;
+  return !/^(?:n\/?a|none|todo|tbd|no response|not provided|placeholder|fill this in)[.!]?$/i.test(
+    normalized,
+  );
 }
 
 export function escapeRegExp(value: string): string {
@@ -78,12 +138,15 @@ export function isFormattingOnly(body: string): boolean {
   return /formatting only|formatter only|prettier|gofmt|rustfmt/i.test(body);
 }
 
-export function patchContains(
+export function addedPatchContains(
   files: ContributionFile[],
   pattern: RegExp,
 ): boolean {
-  return files.some(
-    (file) => file.patch !== undefined && pattern.test(file.patch),
+  return files.some((file) =>
+    file.patch
+      ?.split(/\r?\n/)
+      .filter((line) => line.startsWith("+") && !line.startsWith("+++"))
+      .some((line) => pattern.test(line.slice(1))),
   );
 }
 

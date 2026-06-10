@@ -1,17 +1,17 @@
 {
   "name": "maintainer-intake",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Deterministic contribution-intake checks for open-source maintainers.",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asdgjshjdfkjsurehjg/maintainer-intake.git"
+    "url": "git+https://github.com/joseph-217/maintainer-intake.git"
   },
   "bugs": {
-    "url": "https://github.com/asdgjshjdfkjsurehjg/maintainer-intake/issues"
+    "url": "https://github.com/joseph-217/maintainer-intake/issues"
   },
-  "homepage": "https://github.com/asdgjshjdfkjsurehjg/maintainer-intake#readme",
+  "homepage": "https://github.com/joseph-217/maintainer-intake#readme",
   "keywords": [
     "open-source",
     "maintainer-tools",
@@ -75,7 +75,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "25.9.2",
+    "@types/node": "22.19.21",
     "@vercel/ncc": "0.44.0",
     "prettier": "3.8.4",
     "tsup": "8.5.1",

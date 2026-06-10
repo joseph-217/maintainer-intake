@@ -1,6 +1,6 @@
 import type { IntakeConfig } from "../config/schema.js";
 import type { ContributionContext, RuleResult } from "../types.js";
-import { classifyIssue, textIncludes } from "./helpers.js";
+import { classifyIssue, hasEvidenceField } from "./helpers.js";
 
 export function evaluateIssueRules(
   context: ContributionContext,
@@ -51,7 +51,7 @@ function bugEvidence(
   }
 
   const missing = config.issues.bug.require.filter(
-    (field) => !textIncludes(context.body, [field, field.replace(/-/g, " ")]),
+    (field) => !hasEvidenceField(context.body, field),
   );
   return {
     ruleId: "MI-ISSUE-BUG-EVIDENCE",
@@ -87,7 +87,7 @@ function featureEvidence(
   }
 
   const missing = config.issues.feature.require.filter(
-    (field) => !textIncludes(context.body, [field, field.replace(/-/g, " ")]),
+    (field) => !hasEvidenceField(context.body, field),
   );
   return {
     ruleId: "MI-ISSUE-FEATURE-EVIDENCE",
@@ -123,7 +123,7 @@ function securityRouting(
   }
 
   const missing = config.issues.security.require.filter(
-    (field) => !textIncludes(context.body, [field, field.replace(/-/g, " ")]),
+    (field) => !hasEvidenceField(context.body, field),
   );
   return {
     ruleId: "MI-ISSUE-SECURITY-ROUTING",

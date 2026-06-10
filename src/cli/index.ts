@@ -23,8 +23,8 @@ import {
   loadPullRequestFromGitHub,
 } from "../github/octokit-provider.js";
 import { parseGitHubReference } from "../github/reference.js";
+import { VERSION } from "../version.js";
 
-const VERSION = "0.1.1";
 const DEFAULT_CONFIG_PATH = ".github/maintainer-intake.yml";
 
 type CliIo = {

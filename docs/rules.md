@@ -2,6 +2,10 @@
 
 Rules are deterministic and versioned by stable IDs.
 
+## Evidence-Linting Boundary
+
+Rules inspect repository metadata, configured headings or labels, non-placeholder field content, recognizable command patterns, paths, and diff indicators. They do not understand whether prose is truthful, whether a test adequately covers behavior, or whether a patch is correct or secure. A passing packet means the configured intake evidence is present, not that maintainer review can be skipped.
+
 ## Pull Requests
 
 | ID                   | Behavior                                                                  | Typical remediation                                                 |
@@ -30,6 +34,7 @@ Rules are deterministic and versioned by stable IDs.
 ## False Positives And Tuning
 
 - Template and evidence requirements come from `.github/maintainer-intake.yml`; tune required sections and issue fields to match the repository's real policy.
+- Required PR sections and issue evidence fields need a non-placeholder value. Empty headings, HTML-only template comments, `TBD`, and bare field-name mentions do not satisfy the check.
 - Risky-path matches are glob-based. Narrow an overly broad pattern or adjust its required evidence.
 - Classification is heuristic and informational. Clear scope language generally resolves ambiguous classifications.
 - Binary files and omitted or truncated patches limit diff evidence; use maintainer review rather than treating missing patch text as proof of safety.

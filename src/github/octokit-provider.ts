@@ -1,7 +1,13 @@
 import { Octokit } from "@octokit/rest";
+import {
+  DEFAULT_CONFIG,
+  parseConfigText,
+  type IntakeConfig,
+} from "../engine/index.js";
 import type { IntakeResult } from "../engine/types.js";
 import type { ContributionContext, ContributionFile } from "../engine/types.js";
 import type { GitHubContributionReference } from "./reference.js";
+import { VERSION } from "../version.js";
 
 export type GitHubWriteOptions = {
   comment?: boolean | undefined;
@@ -14,7 +20,7 @@ export type GitHubWriteOptions = {
 export function createOctokit(token: string): Octokit {
   return new Octokit({
     auth: token,
-    userAgent: "maintainer-intake/0.1.1",
+    userAgent: "maintainer-intake/" + VERSION,
   });
 }
 
@@ -137,6 +143,41 @@ export async function loadIssueFromGitHub(
     linkedIssues: [],
     metadata: {},
   };
+}
+
+export async function loadConfigFromGitHub(
+  reference: Pick<GitHubContributionReference, "owner" | "repo">,
+  token: string,
+  path: string,
+  defaultBranch: string,
+  octokit: Octokit = createOctokit(token),
+): Promise<IntakeConfig> {
+  try {
+    const response = await octokit.repos.getContent({
+      owner: reference.owner,
+      repo: reference.repo,
+      path,
+      ref: defaultBranch,
+    });
+    const data = response.data;
+    if (
+      Array.isArray(data) ||
+      data.type !== "file" ||
+      typeof data.content !== "string" ||
+      data.encoding !== "base64"
+    ) {
+      throw new Error(
+        "GitHub config path is not a base64-encoded file: " + path,
+      );
+    }
+    const raw = Buffer.from(data.content.replace(/\n/g, ""), "base64").toString(
+      "utf8",
+    );
+    return parseConfigText(raw, path);
+  } catch (error) {
+    if ((error as { status?: number }).status === 404) return DEFAULT_CONFIG;
+    throw error;
+  }
 }
 
 export async function applyGitHubWritePlan(

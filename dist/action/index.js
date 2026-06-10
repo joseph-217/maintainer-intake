@@ -39034,7 +39034,7 @@ const _summary = new Summary();
  * @deprecated use `core.summary`
  */
 const markdownSummary = (/* unused pure expression or super */ null && (_summary));
-const summary = (/* unused pure expression or super */ null && (_summary));
+const summary = _summary;
 //# sourceMappingURL=summary.js.map
 ;// CONCATENATED MODULE: ./node_modules/@actions/core/lib/path-utils.js
 
@@ -55187,11 +55187,62 @@ function textIncludes(body, terms) {
     const normalized = body.toLowerCase();
     return terms.some((term) => normalized.includes(term.toLowerCase()));
 }
-function hasSection(body, section) {
-    const escaped = escapeRegExp(section);
-    const heading = new RegExp("(^|\\n)#{1,6}\\s*" + escaped + "\\b", "i");
-    const label = new RegExp("(^|\\n)" + escaped + "\\s*:", "i");
-    return heading.test(body) || label.test(body);
+function hasSectionContent(body, section) {
+    const lines = body.split(/\r?\n/);
+    const escaped = escapeRegExp(section.trim().replace(/[-_]+/g, " "));
+    const heading = new RegExp("^#{1,6}\\s*" + escaped + "\\s*#*\\s*$", "i");
+    const label = new RegExp("^\\s*" + escaped + "\\s*:\\s*(.*)$", "i");
+    for (let index = 0; index < lines.length; index += 1) {
+        const line = lines[index] ?? "";
+        const labelMatch = line.match(label);
+        if (labelMatch) {
+            const block = [labelMatch[1] ?? ""];
+            for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+                const candidate = lines[cursor] ?? "";
+                if (/^#{1,6}\s+/.test(candidate) ||
+                    /^\s*[\w][\w -]*:\s*/.test(candidate)) {
+                    break;
+                }
+                block.push(candidate);
+            }
+            if (hasMeaningfulContent(block.join("\n")))
+                return true;
+        }
+        if (heading.test(line)) {
+            const block = [];
+            for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+                const candidate = lines[cursor] ?? "";
+                if (/^#{1,6}\s+/.test(candidate))
+                    break;
+                block.push(candidate);
+            }
+            if (hasMeaningfulContent(block.join("\n")))
+                return true;
+        }
+    }
+    return false;
+}
+function hasEvidenceField(body, field) {
+    const label = field.trim().replace(/[-_]+/g, " ");
+    if (hasSectionContent(body, label))
+        return true;
+    const escaped = escapeRegExp(label);
+    const inline = new RegExp("(?:^|[\\n.!?]\\s*)" +
+        escaped +
+        "\\s*:\\s*([\\s\\S]*?)(?=\\s+[A-Za-z][A-Za-z0-9 _-]{1,40}:|$)", "i");
+    const match = body.match(inline);
+    return match ? hasMeaningfulContent(match[1] ?? "") : false;
+}
+function hasMeaningfulContent(value) {
+    const normalized = value
+        .replace(/<!--[\s\S]*?-->/g, " ")
+        .replace(/^\s*[-*]\s*\[[ xX]\]\s*/gm, " ")
+        .replace(/[`*_>#]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    if (!/[\p{L}\p{N}]/u.test(normalized))
+        return false;
+    return !/^(?:n\/?a|none|todo|tbd|no response|not provided|placeholder|fill this in)[.!]?$/i.test(normalized);
 }
 function escapeRegExp(value) {
     return value.replace(/[.*+?^$()|[\]\\{}]/g, "\\$&");
@@ -55227,8 +55278,11 @@ function isDependencyOnly(files) {
 function isFormattingOnly(body) {
     return /formatting only|formatter only|prettier|gofmt|rustfmt/i.test(body);
 }
-function patchContains(files, pattern) {
-    return files.some((file) => file.patch !== undefined && pattern.test(file.patch));
+function addedPatchContains(files, pattern) {
+    return files.some((file) => file.patch
+        ?.split(/\r?\n/)
+        .filter((line) => line.startsWith("+") && !line.startsWith("+++"))
+        .some((line) => pattern.test(line.slice(1))));
 }
 function classifyIssue(context) {
     const haystack = (context.title +
@@ -55286,7 +55340,7 @@ function bugEvidence(context, config, type) {
             evidence: ["Issue is not classified as a bug."],
         };
     }
-    const missing = config.issues.bug.require.filter((field) => !textIncludes(context.body, [field, field.replace(/-/g, " ")]));
+    const missing = config.issues.bug.require.filter((field) => !hasEvidenceField(context.body, field));
     return {
         ruleId: "MI-ISSUE-BUG-EVIDENCE",
         title: "Bug report evidence",
@@ -55312,7 +55366,7 @@ function featureEvidence(context, config, type) {
             evidence: ["Issue is not classified as a feature request."],
         };
     }
-    const missing = config.issues.feature.require.filter((field) => !textIncludes(context.body, [field, field.replace(/-/g, " ")]));
+    const missing = config.issues.feature.require.filter((field) => !hasEvidenceField(context.body, field));
     return {
         ruleId: "MI-ISSUE-FEATURE-EVIDENCE",
         title: "Feature request evidence",
@@ -55338,7 +55392,7 @@ function securityRouting(context, config, type) {
             evidence: ["Issue is not classified as security-sensitive."],
         };
     }
-    const missing = config.issues.security.require.filter((field) => !textIncludes(context.body, [field, field.replace(/-/g, " ")]));
+    const missing = config.issues.security.require.filter((field) => !hasEvidenceField(context.body, field));
     return {
         ruleId: "MI-ISSUE-SECURITY-ROUTING",
         title: "Security-sensitive report routing",
@@ -55412,7 +55466,7 @@ function evaluatePullRequestRules(context, config) {
     ];
 }
 function requiredTemplateSections(context, config) {
-    const missing = config.pullRequests.requiredSections.filter((section) => !hasSection(context.body, section));
+    const missing = config.pullRequests.requiredSections.filter((section) => !hasSectionContent(context.body, section));
     return {
         ruleId: "MI-PR-TEMPLATE",
         title: "Required pull request template sections",
@@ -55420,11 +55474,13 @@ function requiredTemplateSections(context, config) {
         severity: "medium",
         outcome: missing.length === 0 ? "pass" : "fail",
         evidence: missing.length === 0
-            ? ["All configured sections are present."]
-            : ["Missing sections: " + missing.join(", ") + "."],
+            ? ["All configured sections contain evidence."]
+            : ["Missing or empty sections: " + missing.join(", ") + "."],
         remediation: missing.length === 0
             ? undefined
-            : "Add the missing PR template sections: " + missing.join(", ") + ".",
+            : "Add meaningful content to the PR template sections: " +
+                missing.join(", ") +
+                ".",
     };
 }
 function linkedIssue(context, config) {
@@ -55642,7 +55698,7 @@ function riskyPathEvidence(context, config) {
 }
 function ciWeakening(context) {
     const workflowFiles = matchesAnyPath(context.files, ".github/workflows/**");
-    const suspiciousPatch = patchContains(context.files, /skip|continue-on-error:\s*true|pull_request_target|permissions:\s*write/i);
+    const suspiciousPatch = addedPatchContains(context.files, /\bskip\b|continue-on-error:\s*true|pull_request_target|permissions:\s*(?:write|write-all)|(?:actions|checks|contents|deployments|issues|packages|pages|pull-requests|security-events|statuses):\s*write/i);
     const removedTests = context.files.some((file) => file.status === "removed" && /test|spec|__tests__/i.test(file.path));
     if (workflowFiles.length === 0 && !suspiciousPatch && !removedTests) {
         return {
@@ -55667,8 +55723,8 @@ function ciWeakening(context) {
                 ? String(workflowFiles.length) + " workflow file(s) changed."
                 : "No workflow file path changed.",
             suspiciousPatch
-                ? "Patch contains CI-risk keywords."
-                : "No CI-risk keyword found.",
+                ? "Added patch lines contain CI-risk indicators."
+                : "No CI-risk indicator was added.",
             removedTests
                 ? "A test-like file was removed."
                 : "No removed test-like file found.",
@@ -56037,12 +56093,15 @@ async function loadConfigFromFile(path) {
         }
         throw error;
     }
+    return parseConfigText(raw, path);
+}
+function parseConfigText(raw, source) {
     let value;
     try {
-        value = path.endsWith(".json") ? JSON.parse(raw) : yaml_dist.parse(raw);
+        value = source.endsWith(".json") ? JSON.parse(raw) : yaml_dist.parse(raw);
     }
     catch (error) {
-        throw new ConfigError("Invalid config syntax in " + path + ": " + error.message);
+        throw new ConfigError("Invalid config syntax in " + source + ": " + error.message);
     }
     return parseConfig(value);
 }
@@ -56343,12 +56402,20 @@ const dist_src_Octokit = Octokit.plugin(requestLog, legacyRestEndpointMethods, p
 );
 
 
+;// CONCATENATED MODULE: ./package.json
+const package_namespaceObject = {"rE":"0.1.2"};
+;// CONCATENATED MODULE: ./src/version.ts
+
+const src_version_VERSION = package_namespaceObject.rE;
+
 ;// CONCATENATED MODULE: ./src/github/octokit-provider.ts
+
+
 
 function createOctokit(token) {
     return new dist_src_Octokit({
         auth: token,
-        userAgent: "maintainer-intake/0.1.1",
+        userAgent: "maintainer-intake/" + src_version_VERSION,
     });
 }
 async function loadPullRequestFromGitHub(reference, token) {
@@ -56455,6 +56522,30 @@ async function loadIssueFromGitHub(reference, token) {
         linkedIssues: [],
         metadata: {},
     };
+}
+async function loadConfigFromGitHub(reference, token, path, defaultBranch, octokit = createOctokit(token)) {
+    try {
+        const response = await octokit.repos.getContent({
+            owner: reference.owner,
+            repo: reference.repo,
+            path,
+            ref: defaultBranch,
+        });
+        const data = response.data;
+        if (Array.isArray(data) ||
+            data.type !== "file" ||
+            typeof data.content !== "string" ||
+            data.encoding !== "base64") {
+            throw new Error("GitHub config path is not a base64-encoded file: " + path);
+        }
+        const raw = Buffer.from(data.content.replace(/\n/g, ""), "base64").toString("utf8");
+        return parseConfigText(raw, path);
+    }
+    catch (error) {
+        if (error.status === 404)
+            return schema_DEFAULT_CONFIG;
+        throw error;
+    }
 }
 async function applyGitHubWritePlan(reference, token, result, renderedComment, options) {
     const octokit = createOctokit(token);
@@ -56613,16 +56704,30 @@ async function runAction() {
         setOutput("packet-summary", "Unsupported event.");
         return;
     }
-    let config = loaded.config ?? (await loadConfigFromFile(configPath));
+    let config;
+    if (loaded.config) {
+        config = loaded.config;
+    }
+    else if (loaded.reference && token) {
+        config = await loadConfigFromGitHub(loaded.reference, token, configPath, loaded.context.repository.defaultBranch);
+    }
+    else {
+        config = await loadConfigFromFile(configPath);
+    }
     if (mode) {
         config = parseConfig({ ...config, mode });
     }
     const result = evaluateContribution(loaded.context, config);
+    const renderedPacket = renderResult(result, "markdown");
     const renderedComment = renderResult(result, "comment");
     setOutput("status", result.status);
     setOutput("score", String(result.score));
     setOutput("packet-summary", result.packet.summary);
     setOutput("result-json", JSON.stringify(result));
+    info(renderedPacket);
+    if (process.env.GITHUB_STEP_SUMMARY) {
+        await summary.addRaw(renderedPacket).write();
+    }
     if (dryRun) {
         info("Dry-run write plan: " + JSON.stringify(result.writePlan));
     }

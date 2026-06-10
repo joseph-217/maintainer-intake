@@ -19,6 +19,7 @@ import {
   loadPullRequestFromGitHub,
 } from "../github/octokit-provider.js";
 import { parseGitHubReference } from "../github/reference.js";
+import { VERSION } from "../version.js";
 
 const formatSchema = z.enum(["markdown", "json", "comment"]).default("json");
 const configInputSchema = {
@@ -30,7 +31,7 @@ const configInputSchema = {
 export function createMcpServer(cwd = process.cwd()): McpServer {
   const server = new McpServer({
     name: "maintainer-intake",
-    version: "0.1.1",
+    version: VERSION,
   });
 
   server.registerTool(

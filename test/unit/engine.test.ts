@@ -29,6 +29,72 @@ describe("shared engine", () => {
     expect(result.writePlan.labels.add).toContain("intake:needs-evidence");
   });
 
+  test("does not accept empty or placeholder PR template sections", () => {
+    const context = {
+      ...ready.context,
+      body: [
+        "## Summary",
+        "<!-- describe the change -->",
+        "## Linked issue",
+        "Fixes #41",
+        "## Tests",
+        "TBD",
+        "## Scope",
+        "Out of scope: performance tuning.",
+      ].join("\n\n"),
+    };
+    const result = evaluateContribution(context, DEFAULT_CONFIG);
+    const template = result.rules.find(
+      (rule) => rule.ruleId === "MI-PR-TEMPLATE",
+    );
+    expect(template?.outcome).toBe("fail");
+    expect(template?.evidence.join(" ")).toContain("Summary");
+    expect(template?.evidence.join(" ")).toContain("Tests");
+  });
+
+  test("does not flag a removed CI-risk setting as newly introduced", () => {
+    const context = {
+      ...ready.context,
+      files: [
+        {
+          path: "src/config.ts",
+          status: "modified" as const,
+          additions: 1,
+          deletions: 1,
+          patch: "-continue-on-error: true\n+continue-on-error: false",
+        },
+      ],
+    };
+    const result = evaluateContribution(context, DEFAULT_CONFIG);
+    expect(
+      result.rules.find((rule) => rule.ruleId === "MI-PR-CI-WEAKENING")
+        ?.outcome,
+    ).toBe("pass");
+  });
+
+  test("flags newly added write permissions outside workflow files", () => {
+    const context = {
+      ...ready.context,
+      files: [
+        {
+          path: "config/action-policy.yml",
+          status: "modified" as const,
+          additions: 1,
+          deletions: 0,
+          patch: "+contents: write",
+        },
+      ],
+    };
+    const result = evaluateContribution(context, DEFAULT_CONFIG);
+    const weakening = result.rules.find(
+      (rule) => rule.ruleId === "MI-PR-CI-WEAKENING",
+    );
+    expect(weakening?.outcome).toBe("warn");
+    expect(weakening?.evidence).toContain(
+      "Added patch lines contain CI-risk indicators.",
+    );
+  });
+
   test("computes advisory, check, label, and gate write plans deterministically", () => {
     const expectations = {
       advisory: { exitCode: 0, check: false, labels: [] },
@@ -52,6 +118,29 @@ describe("shared engine", () => {
     );
     expect(evaluateContribution(feature.context, DEFAULT_CONFIG).status).toBe(
       "needs_author_evidence",
+    );
+  });
+
+  test("requires values instead of bare issue evidence field names", () => {
+    const context = {
+      ...bug.context,
+      body: "Bug report mentioning reproduction, expected behavior, and actual behavior.",
+    };
+    const result = evaluateContribution(context, DEFAULT_CONFIG);
+    expect(result.status).toBe("needs_author_evidence");
+    expect(
+      result.rules.find((rule) => rule.ruleId === "MI-ISSUE-BUG-EVIDENCE")
+        ?.outcome,
+    ).toBe("fail");
+  });
+
+  test("accepts labeled inline issue evidence values", () => {
+    const result = evaluateContribution(security.context, DEFAULT_CONFIG);
+    const routing = result.rules.find(
+      (rule) => rule.ruleId === "MI-ISSUE-SECURITY-ROUTING",
+    );
+    expect(routing?.evidence).toContain(
+      "Required security evidence fields appear to be present.",
     );
   });
 
