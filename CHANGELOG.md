@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Refuse npm publication unless the clean working tree, package version, versioned tag, floating major Action tag, and remote tag targets all identify the same release commit.
+- Add a manually dispatched, tokenless npm trusted-publishing workflow with narrow OIDC permissions and release-tag verification.
 
 ## 0.1.2
 
