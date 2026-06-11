@@ -1,13 +1,13 @@
 # Final Verification Report
 
-Status: GitHub v0.1.2 release verified; npm v0.1.2 publication pending security-key approval.
+Status: GitHub and npm v0.1.2 releases verified.
 
-This report records the completed local, package, public repository, live-provider, and GitHub release gates for maintainer-intake v0.1.2. npm still serves v0.1.1 as `latest` until the v0.1.2 publish approval is completed.
+This report records the completed local, package, public repository, live-provider, GitHub release, trusted-publishing, and npm registry gates for maintainer-intake v0.1.2.
 
 ## Final Product Commit
 
 - Supported implementation and GitHub release commit: 2126e0e2e5b8d6f91d343d4caa402a477d192ffd
-- Documentation completion audit commit: 920265821b0d6dfc39a09919db5b1002856ef6f2
+- Trusted-publishing workflow commit: 8964d5ef5bfbb017a10c74aa82e78659254132f0
 - Public repository: https://github.com/joseph-217/maintainer-intake
 - Release URL: https://github.com/joseph-217/maintainer-intake/releases/tag/v0.1.2
 - Floating Action tag: v0
@@ -42,6 +42,18 @@ The documentation completion audit commit passed:
 
 - CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27303902232
 - CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27303902220
+
+The trusted-publishing workflow commit passed:
+
+- CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27315788322
+- CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27315788306
+
+The npm publish workflow completed successfully:
+
+- Publish run: https://github.com/joseph-217/maintainer-intake/actions/runs/27358247279
+- Tagged source: v0.1.2 at 2126e0e2e5b8d6f91d343d4caa402a477d192ffd
+- Authentication: npm trusted publishing with GitHub Actions OIDC; no long-lived publish token
+- Provenance: signed statement published to the Sigstore transparency log at https://search.sigstore.dev/?logIndex=1790852120
 
 ## Verification Commands
 
@@ -83,9 +95,7 @@ Verified:
 - Read-only Action guidance and complete packet output in the Actions step summary.
 - Live released-Action dogfood on issue #3.
 
-External blockers:
-
-- npm v0.1.2 publication requires the npm account's physical security-key approval. Marketplace listing remains optional and adoption must not be fabricated.
+No product release blockers remain. Marketplace listing remains optional, and adoption must not be fabricated.
 
 ## GitHub Settings Audit
 
@@ -100,9 +110,12 @@ Unsupported or account-dependent settings:
 
 - Package: https://www.npmjs.com/package/maintainer-intake
 - npm ownership: verified through the separate npm publisher account
-- `latest`: `0.1.1`
-- The packed v0.1.2 tarball installed cleanly, ran `maintainer-intake --version`, and analyzed a ready-PR fixture successfully through the package-manager binary.
-- Registry publication of v0.1.2 remains pending physical security-key approval; no registry-install claim is made for v0.1.2 yet.
+- `latest`: `0.1.2`
+- Registry SHA-1: `c04f1d17ab6d7963fd1e82f960fe4808ad7a4ccc`
+- Registry integrity: `sha512-N99pldS7gO69Iqs2Wm+6fnqNN+FnNiIJwH7TqcLSaInh785+NXdNR7RBuZOyHxvpt0xR0nqaRZ6H9RJdmyURKA==`
+- The registry values match the package produced and verified inside publish run 27358247279.
+- A clean registry install ran `node_modules/.bin/maintainer-intake --version`, returned `0.1.2`, and analyzed the ready-PR fixture with status `ready_for_review` and score 100.
+- `npm audit signatures` verified registry signatures and attestations for the clean consumer installation.
 - Version `0.1.0` is deprecated with an upgrade warning because its installed CLI did not launch through npm symlinks.
 
 ## Privacy And History Scan

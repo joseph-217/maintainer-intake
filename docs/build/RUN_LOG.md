@@ -352,3 +352,24 @@ Commands and events:
 | Controlled issue #3 and Action run 27314861143                 |    success | The released `v0` Action used read-only permissions, loaded default-branch policy without checkout, and emitted a score-100 packet.                                                             |
 | npm publish v0.1.2                                             |    pending | Package upload reached npm's web authorization gate; physical security-key approval is still required.                                                                                          |
 | Release provenance audit                                       |          0 | A publish attempt from a later evidence commit was canceled before approval; the tagged worktree reproduced the original 55-file tarball with SHA-1 `8a225aeaf8a56622bf04276d26258a9a7ff15ed7`. |
+
+## 2026-06-11: npm Trusted Publishing And v0.1.2 Registry Release
+
+Purpose:
+
+- Replace interactive package publication with repository-bound OIDC trusted publishing.
+- Publish the exact v0.1.2 tagged source only after identity and verification gates pass.
+- Verify the registry dist-tag, package checksum, installed CLI behavior, and provenance attestation.
+
+Commands and events:
+
+| Command or event                                      | Exit/state | Observation                                                                                                                                                                                               |
+| ----------------------------------------------------- | ---------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm login --auth-type=web`; `npm whoami`             |          0 | Authenticated the separate npm publisher account.                                                                                                                                                         |
+| Upgrade npm 11.12.1 to 11.16.0                        |          0 | Added the `--allow-publish` option required for trusted-publisher configurations created after May 20, 2026.                                                                                              |
+| `npm trust github ... --allow-publish`                |          0 | Linked package `maintainer-intake` to GitHub repository `joseph-217/maintainer-intake` and workflow `publish.yml` with publish permission.                                                                |
+| GitHub Actions publish run 27358247279                |    success | Checked out v0.1.2, verified release identity, installed dependencies, passed the full verification lane, and published through npm OIDC with signed provenance.                                          |
+| `npm view maintainer-intake version dist-tags --json` |          0 | Registry returned version 0.1.2 and `latest` 0.1.2.                                                                                                                                                       |
+| Registry checksum read-back                           |          0 | SHA-1 `c04f1d17ab6d7963fd1e82f960fe4808ad7a4ccc` and integrity `sha512-N99pldS7gO69Iqs2Wm+6fnqNN+FnNiIJwH7TqcLSaInh785+NXdNR7RBuZOyHxvpt0xR0nqaRZ6H9RJdmyURKA==` matched the workflow's verified package. |
+| Clean registry install and fixture analysis           |          0 | Installed CLI printed 0.1.2 and analyzed the ready PR fixture with status `ready_for_review` and score 100.                                                                                               |
+| `npm audit signatures`                                |          0 | Clean consumer installation verified registry signatures and package attestations.                                                                                                                        |

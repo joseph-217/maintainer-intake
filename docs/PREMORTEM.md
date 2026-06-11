@@ -1,6 +1,6 @@
 # Premortem
 
-Status: rechecked for GitHub v0.1.2; npm v0.1.2 activation remains open.
+Status: rechecked after GitHub and npm v0.1.2 release completion.
 
 This premortem records risks that must be controlled before implementation and rechecked before release.
 
@@ -25,7 +25,7 @@ This premortem records risks that must be controlled before implementation and r
 
 ## Elephant Risks
 
-| Risk                                                             | Mitigation                                                                                                   | Verification                                                                                                                                        |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A new public repository does not prove adoption.                 | Do not fabricate adoption. Ship useful docs, examples, and honest release evidence.                          | Public docs and final report avoid usage, star, download, or adoption claims unless verified.                                                       |
-| npm package ownership or installed CLI behavior is not verified. | Treat npm publish as a separate activation gate and execute the package-manager binary from a clean install. | Version 0.1.2 passed packed-install verification; registry publication and clean registry installation remain required after security-key approval. |
+| Risk                                                             | Mitigation                                                                                                   | Verification                                                                                                                                                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A new public repository does not prove adoption.                 | Do not fabricate adoption. Ship useful docs, examples, and honest release evidence.                          | Public docs and final report avoid usage, star, download, or adoption claims unless verified.                                                                                                            |
+| npm package ownership or installed CLI behavior is not verified. | Treat npm publish as a separate activation gate and execute the package-manager binary from a clean install. | Version 0.1.2 was published through npm trusted publishing; a clean registry install returned CLI version 0.1.2, analyzed the ready fixture at score 100, and passed signature/attestation verification. |

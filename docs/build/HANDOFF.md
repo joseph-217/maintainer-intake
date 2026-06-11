@@ -2,7 +2,7 @@
 
 ## Current State
 
-maintainer-intake is implemented, locally verified, and publicly released on GitHub as v0.1.2. npm still serves v0.1.1 as `latest` until v0.1.2 receives the npm account's physical security-key approval.
+maintainer-intake is implemented, locally verified, and publicly released on GitHub and npm as v0.1.2. npm trusted publishing is configured for the repository's `publish.yml` workflow.
 
 Public repository: https://github.com/joseph-217/maintainer-intake
 
@@ -14,6 +14,8 @@ Public repository: https://github.com/joseph-217/maintainer-intake
 - Live PR provider smoke passed on public PR #2, which was then closed and its temporary branch deleted.
 - Public repository settings, topics, security settings, branch protection, workflow activation, CI, and CodeQL have been read back.
 - The released `v0` Action ran against controlled issue #3 with read-only permissions, loaded repository policy without checkout, and produced a score-100 packet.
+- GitHub Actions publish run 27358247279 published v0.1.2 through npm trusted publishing and produced signed provenance.
+- A clean registry consumer installed v0.1.2, ran the CLI, analyzed the ready fixture, and verified npm signatures and attestations.
 
 ## Current Branch And Commit
 
@@ -33,12 +35,14 @@ Public repository: https://github.com/joseph-217/maintainer-intake
 | Public CodeQL run 27313604085   |    success | CodeQL passed on the 0.1.2 release commit.                                          |
 | Released Action run 27314861143 |    success | `v0` resolved to 2126e0e and produced the expected read-only issue packet.          |
 | Packed 0.1.2 install            |          0 | Packed CLI printed version 0.1.2 and analyzed the ready fixture.                    |
+| npm publish run 27358247279     |    success | OIDC trusted publishing released v0.1.2 with signed provenance.                     |
+| Registry 0.1.2 install          |          0 | CLI printed 0.1.2; ready fixture returned score 100; attestations verified.         |
 | Live analyze-issue on #1        |          0 | Returned issue #1 with status ready_for_review and score 100.                       |
 | Live analyze-pr on #2           |          0 | Returned pull_request #2 with status needs_author_evidence and score 71.            |
 
 ## Known Blockers
 
-- npm v0.1.2 publication is waiting for the npm account's physical security-key approval. The code, package tarball, GitHub release, and released Action have already passed their gates.
+No product release blockers remain.
 
 ## GitHub Publication State
 
@@ -46,7 +50,7 @@ The repository is public, pushed, and configured. See artifacts/verification/git
 
 ## npm Publication State
 
-The package is published at https://www.npmjs.com/package/maintainer-intake. Registry ownership remains under the verified npm publisher account. Version 0.1.1 remains `latest`; v0.1.2 passed packed-install verification but is not a registry release until security-key approval succeeds.
+The package is published at https://www.npmjs.com/package/maintainer-intake. Registry ownership remains under the verified npm publisher account. Version 0.1.2 is `latest`, was published by GitHub Actions using npm trusted publishing, and passed a clean registry-install CLI and fixture smoke. The registry checksum matches the package generated in publish run 27358247279.
 
 ## Resume Command
 
@@ -55,4 +59,4 @@ From the product repository root:
     git status --short
     gh run list --repo joseph-217/maintainer-intake --limit 5
 
-Complete npm v0.1.2 approval, verify the registry dist-tag and a clean registry install, then update this handoff and the final report. Future releases should use the packed-install npm binary smoke before publication.
+For a future release, follow `docs/releasing.md`, keep the version tag and floating major Action tag aligned, and dispatch `publish.yml` with the exact version tag. Retain the packed-install and clean registry-install smokes.
