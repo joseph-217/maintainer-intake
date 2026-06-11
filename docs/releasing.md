@@ -30,7 +30,10 @@ GitHub release:
 npm publication is a separate gate. Do not publish unless npm auth, name ownership, and registry install verification have passed:
 
     npm whoami
+    npm run verify:release-provenance
     npm publish --access public
     npm view maintainer-intake dist-tags --json
+
+`npm publish` runs the provenance verifier automatically through `prepublishOnly`. It refuses publication unless the working tree is clean and `HEAD`, `vX.Y.Z`, the floating `vX` Action tag, and both remote tags resolve to the same commit. Build and publish from a clean checkout of the versioned tag; do not publish from a later documentation commit.
 
 After publication, install the exact version in a clean temporary directory and run both `maintainer-intake --version` and a fixture analysis through `node_modules/.bin/maintainer-intake`.

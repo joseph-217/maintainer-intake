@@ -61,7 +61,9 @@
     "verify:bundle": "node scripts/verify-bundle.mjs",
     "verify:action-dist": "git diff --exit-code -- dist/action",
     "verify:pack": "node scripts/verify-pack.mjs",
+    "verify:release-provenance": "node scripts/verify-release-provenance.mjs",
     "verify:security": "node scripts/verify-security.mjs",
+    "prepublishOnly": "npm run verify:release-provenance",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run test:integration && npm run test:e2e && npm run build && npm run build:action && npm run verify:bundle && npm run verify:action-dist && npm run verify:pack && npm run verify:security"
   },
   "dependencies": {

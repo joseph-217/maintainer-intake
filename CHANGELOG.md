@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Refuse npm publication unless the clean working tree, package version, versioned tag, floating major Action tag, and remote tag targets all identify the same release commit.
+
 ## 0.1.2
 
 - Load Action configuration from the repository default branch through the GitHub Contents API without checking out contributor code.
