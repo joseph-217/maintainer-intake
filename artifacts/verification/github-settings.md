@@ -75,6 +75,7 @@ This protects against force pushes and branch deletion without adding required r
 | CI                 | active | 292475252 |
 | CodeQL             | active | 292475254 |
 | Dependency Review  | active | 292475255 |
+| Maintainer Intake  | active | 293408221 |
 | Dependabot Updates | active | 292475305 |
 
 ## Initial Public Runs

@@ -1,18 +1,18 @@
 # Final Verification Report
 
-Status: verified for the supported v0.1.1 release.
+Status: GitHub v0.1.2 release verified; npm v0.1.2 publication pending security-key approval.
 
-This report records the completed local, package, public repository, live-provider, GitHub release, and npm publication gates for maintainer-intake v0.1.1.
+This report records the completed local, package, public repository, live-provider, and GitHub release gates for maintainer-intake v0.1.2. npm still serves v0.1.1 as `latest` until the v0.1.2 publish approval is completed.
 
 ## Final Product Commit
 
-- Supported implementation and release commit: efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f
+- Supported implementation and GitHub release commit: 2126e0e2e5b8d6f91d343d4caa402a477d192ffd
 - Documentation completion audit commit: 920265821b0d6dfc39a09919db5b1002856ef6f2
 - Public repository: https://github.com/joseph-217/maintainer-intake
-- Release URL: https://github.com/joseph-217/maintainer-intake/releases/tag/v0.1.1
+- Release URL: https://github.com/joseph-217/maintainer-intake/releases/tag/v0.1.2
 - Floating Action tag: v0
 
-The v0.1.1 and v0 tags dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
+The v0.1.2 and v0 tags dereference to 2126e0e2e5b8d6f91d343d4caa402a477d192ffd.
 
 ## Public Repository
 
@@ -28,10 +28,10 @@ The v0.1.1 and v0 tags dereference to efdf6322f2c7e430877b7a53eaa8f0116d1f9d7f.
 
 ## Public CI State
 
-The v0.1.1 release commit passed public CI and CodeQL:
+The v0.1.2 release commit passed public CI and CodeQL:
 
-- CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27298546865
-- CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27298546835
+- CI run: https://github.com/joseph-217/maintainer-intake/actions/runs/27313604092
+- CodeQL run: https://github.com/joseph-217/maintainer-intake/actions/runs/27313604085
 
 The evidence documentation commit also passed:
 
@@ -78,10 +78,14 @@ Verified:
 - Fresh-clone verification.
 - Public repository creation under the approved owner.
 - Metadata, topics, merge settings, branch protection, security settings, workflow activation, CI, CodeQL, and settings-audit read-backs.
+- Checkout-free repository policy loading through the GitHub Contents API.
+- Non-placeholder evidence validation and added-line-only CI-risk scanning.
+- Read-only Action guidance and complete packet output in the Actions step summary.
+- Live released-Action dogfood on issue #3.
 
 External blockers:
 
-- None for the v0.1.1 release. Marketplace listing remains optional and adoption must not be fabricated.
+- npm v0.1.2 publication requires the npm account's physical security-key approval. Marketplace listing remains optional and adoption must not be fabricated.
 
 ## GitHub Settings Audit
 
@@ -97,7 +101,8 @@ Unsupported or account-dependent settings:
 - Package: https://www.npmjs.com/package/maintainer-intake
 - npm ownership: verified through the separate npm publisher account
 - `latest`: `0.1.1`
-- A clean registry install ran `maintainer-intake --version` and a ready-PR fixture analysis successfully through the package-manager binary.
+- The packed v0.1.2 tarball installed cleanly, ran `maintainer-intake --version`, and analyzed a ready-PR fixture successfully through the package-manager binary.
+- Registry publication of v0.1.2 remains pending physical security-key approval; no registry-install claim is made for v0.1.2 yet.
 - Version `0.1.0` is deprecated with an upgrade warning because its installed CLI did not launch through npm symlinks.
 
 ## Privacy And History Scan

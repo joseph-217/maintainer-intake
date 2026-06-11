@@ -313,7 +313,7 @@ Commands and events:
 Purpose:
 
 - Adopt `joseph-217` as the canonical GitHub login after the account rename.
-- Remove personal username evaluation from public project documentation.
+- Normalize all public project references to the canonical GitHub identity.
 - Recheck repository access, release continuity, Action references, package metadata, and local commit identity.
 
 Commands and events:
@@ -345,4 +345,9 @@ Commands and events:
 | npm run verify                                                 |          0 | Format, lint, typecheck, 19 unit tests, 8 integration tests, 16 E2E tests, builds, bundle, packed install, and security checks passed. |
 | Node 22.22.3 and Node 24.16.0 full verification                |          0 | The complete `npm run verify` lane passed under both supported runtime lines.                                                          |
 | npm run verify:pack                                            |          0 | Packed `maintainer-intake@0.1.2` installed cleanly; CLI printed 0.1.2 and analyzed the ready fixture.                                  |
-| Canonical identity and personal-assessment scans               |          0 | No former GitHub login or username-risk language remains in current parent or product files.                                           |
+| Canonical identity scan                                        |          0 | Current parent and product files contain the canonical GitHub login and no former login.                                               |
+| Fresh clone at `2126e0e`                                       |          0 | `npm ci`, full Node 24 verification, packed CLI smoke, and clean worktree check passed.                                                |
+| Public CI 27313604092; CodeQL 27313604085                      |    success | Node 22/24 and CodeQL passed on the exact v0.1.2 release commit.                                                                       |
+| GitHub release v0.1.2; update v0                               |          0 | Both tags dereference to `2126e0e2e5b8d6f91d343d4caa402a477d192ffd`.                                                                   |
+| Controlled issue #3 and Action run 27314861143                 |    success | The released `v0` Action used read-only permissions, loaded default-branch policy without checkout, and emitted a score-100 packet.    |
+| npm publish v0.1.2                                             |    pending | Package upload reached npm's web authorization gate; physical security-key approval is still required.                                 |
