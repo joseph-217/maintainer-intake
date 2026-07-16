@@ -1,0 +1,54 @@
+name: Enrich 1000 company job boards
+
+on:
+  pull_request:
+    branches: [jobscan-runner-base-20260716]
+    paths:
+      - 'jobscan/enrich.py'
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout scan branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate extractor
+        run: python -m py_compile jobscan/enrich.py
+
+      - name: Scan and classify active postings
+        env:
+          JOBSCAN_WORKERS: '18'
+          JOBSCAN_TIMEOUT: '35'
+          JOBSCAN_RETRIES: '4'
+        run: python jobscan/enrich.py
+
+      - name: Package results
+        if: always()
+        shell: bash
+        run: |
+          if [ -d jobscan/output ]; then
+            zip -r jobscan-results.zip jobscan/output
+          else
+            mkdir -p jobscan/output
+            printf '{"status":"no output directory"}\n' > jobscan/output/workflow_failure.json
+            zip -r jobscan-results.zip jobscan/output
+          fi
+
+      - name: Upload result package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jobscan-results
+          path: jobscan-results.zip
+          if-no-files-found: error
+          retention-days: 7
