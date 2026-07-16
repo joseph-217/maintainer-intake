@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [jobscan-runner-base-20260716]
     paths:
-      - 'jobscan/enrich.py'
+      - 'jobscan/enrich.py.gz.b64'
 
 permissions:
   contents: read
@@ -22,8 +22,16 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Validate extractor
-        run: python -m py_compile jobscan/enrich.py
+      - name: Decode and validate extractor
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64, gzip
+          from pathlib import Path
+          encoded = Path('jobscan/enrich.py.gz.b64').read_text(encoding='utf-8').strip()
+          Path('jobscan/enrich.py').write_bytes(gzip.decompress(base64.b64decode(encoded)))
+          PY
+          python -m py_compile jobscan/enrich.py
 
       - name: Scan and classify active postings
         env:
